@@ -68,15 +68,60 @@ Only include agents that genuinely add value. Assign each step a "stage" number 
 Respond with ONLY a JSON object, no prose, no code fences:
 {"summary":"one sentence restating the goal","steps":[{"stage":1,"agent":"<id>","instruction":"<what this agent must produce>"}]}`;
 
-// Optional shared access code: set PORTAL_ACCESS_CODE in Vercel to require it.
-export function checkAccess(req, res) {
+// V7 access control.
+// - PORTAL_ACCESS_CODE set: every protected route needs the x-access-code header (constant-time compare).
+// - Not set: routes that spend model credit or run code are closed unless ALLOW_PUBLIC_ACCESS=true,
+//   so a fresh deploy with an API key is never open to the whole internet by accident.
+// - Every route is rate-limited per client IP, and repeated wrong codes lock that IP out for 15 minutes.
+import crypto from 'node:crypto';
+import { getSession, enterUser, authEnabled } from './_auth.js';
+
+const RL = new Map();          // `${route}|${ip}` -> [timestamps]  (best effort: per warm instance)
+const FAILS = new Map();       // ip -> { n, until }
+export function clientIp(req) {
+  const f = String(req.headers?.['x-forwarded-for'] || '').split(',')[0].trim();
+  return f || req.headers?.['x-real-ip'] || req.socket?.remoteAddress || 'unknown';
+}
+export function safeEqual(a, b) {
+  const x = Buffer.from(String(a)), y = Buffer.from(String(b));
+  if (x.length !== y.length) { crypto.timingSafeEqual(x, x); return false; }
+  return crypto.timingSafeEqual(x, y);
+}
+export function rateLimit(req, res, { route = 'api', limit = Number(process.env.RATE_LIMIT_PER_MIN || 60), windowMs = 60000, now = Date.now() } = {}) {
+  const k = `${route}|${clientIp(req)}`;
+  const hits = (RL.get(k) || []).filter(t => now - t < windowMs);
+  if (hits.length >= limit) {
+    res.setHeader?.('retry-after', String(Math.ceil((windowMs - (now - hits[0])) / 1000)));
+    res.status(429).json({ error: `Too many requests. Limit is ${limit} per minute; try again shortly.` });
+    return false;
+  }
+  hits.push(now); RL.set(k, hits);
+  if (RL.size > 5000) for (const [key, v] of RL) if (!v.length || now - v[v.length - 1] > windowMs) RL.delete(key);
+  return true;
+}
+export function checkAccess(req, res, { spend = true, route = 'api', now = Date.now() } = {}) {
+  if (!rateLimit(req, res, { route, now })) return false;
+  // Signed-in customers never see an access code.
+  const session = getSession(req);
+  if (session) { enterUser(session); return true; }
   const need = process.env.PORTAL_ACCESS_CODE;
-  if (!need) return true;
-  const got = req.headers['x-access-code'] || '';
-  if (got === need) return true;
+  if (!need) {
+    if (!spend || process.env.ALLOW_PUBLIC_ACCESS === 'true') return true;
+    if (authEnabled()) { res.status(401).json({ error: 'Please sign in.', needLogin: true }); return false; }
+    res.status(403).json({ error: 'This deployment has no PORTAL_ACCESS_CODE, so model and sandbox routes are closed. Set PORTAL_ACCESS_CODE in Vercel (or ALLOW_PUBLIC_ACCESS=true for a public demo) and redeploy.', needSetup: true });
+    return false;
+  }
+  const ip = clientIp(req), f = FAILS.get(ip);
+  if (f && f.until > now) { res.status(429).json({ error: 'Too many wrong access codes. Try again in 15 minutes.' }); return false; }
+  const got = String(req.headers?.['x-access-code'] || '');
+  if (got && safeEqual(got, need)) { FAILS.delete(ip); return true; }
+  if (got) { const n = (f?.n || 0) + 1; FAILS.set(ip, { n, until: n >= 10 ? now + 15 * 60000 : 0 }); }
+  if (!spend && authEnabled()) return true; // read-only routes stay usable on the sign-in screen
+  if (authEnabled() && !got) { res.status(401).json({ error: 'Please sign in.', needLogin: true }); return false; }
   res.status(401).json({ error: 'Access code required.', needCode: true });
   return false;
 }
+export function _resetAccessState() { RL.clear(); FAILS.clear(); }
 
 export function requireKey(res) {
   const key = process.env.ANTHROPIC_API_KEY;

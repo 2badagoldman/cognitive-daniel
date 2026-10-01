@@ -6,7 +6,7 @@ export const config = { maxDuration: 60 };
 export default async function handler(req, res) {
   if (cors(req, res)) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (!checkAccess(req, res)) return;
+  if (!checkAccess(req, res, { route: 'plan' })) return;
   const key = requireKey(res); if (!key) return;
   const task = String(req.body?.task || '').trim().slice(0, 8000);
   if (!task) return res.status(400).json({ error: 'Describe the task first.' });

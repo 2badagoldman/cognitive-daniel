@@ -1,6 +1,38 @@
-# Daniel by Cognitive AI — v6
+# Daniel by Cognitive AI — v7
 
 **Daniel** is an autonomous engineer. Give it a goal; it plans the work into tasks, completes every task with its tests verified by the platform, commits each one, and opens one pull request (or a local branch). It retries with fresh approaches, compacts its context on long tasks, escalates to stronger models when stuck, parks and later revisits blocked tasks, and pauses (never throws work away) at your budget/time limits.
+
+## What's new in v7
+- **Sign in with GitHub.** Customers sign in with GitHub instead of typing a shared access code. Their own GitHub token is used for their repos and pull requests (no server-wide `GITHUB_TOKEN` needed).
+- **Cognitive Personal.** A personal life agent in the suite: it remembers what you tell it (Memory tab, deletable) and works across Gmail/Google Calendar, Outlook/Microsoft 365, text messages (Twilio), X and Home Assistant. Anything that sends, posts or controls a device waits for your confirmation.
+- **Honest verification.** Daniel can no longer finish a task by editing existing tests or by "proving" it with `true`, `echo` or `npm test || true`. New test files are still encouraged.
+- **Any stack, out of the box.** The sandbox detects Go, Java/Maven, Rust, Python and Ruby projects and installs the toolchains before work starts.
+- **Safer by default.** Model and sandbox routes are closed until sign-in, an access code, or `ALLOW_PUBLIC_ACCESS=true` is configured. Every route is rate-limited; repeated wrong access codes lock the caller out for 15 minutes; codes are compared in constant time.
+- **Clearer errors.** A banner shows when `ANTHROPIC_API_KEY` is missing, missions stop instead of retrying on auth errors, and Wiki failures are shown on the page.
+
+### Setting up sign-in (5 minutes)
+1. GitHub → Settings → Developer settings → OAuth Apps → **New OAuth App**.
+   Homepage URL: `https://<your-domain>` · Callback URL: `https://<your-domain>/api/auth?action=callback`
+2. In Vercel add `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` and `SESSION_SECRET` (any random string of 32+ characters), then redeploy.
+3. Optional: `ALLOWED_GITHUB_USERS=alice,bob` limits who can sign in. `PORTAL_ACCESS_CODE` keeps working for scripts and CI.
+
+### Setting up Cognitive Personal connections
+Each connection is optional. The OAuth redirect URI for all of them is `https://<your-domain>/api/personal?action=oauth&provider=<google|microsoft|x>`.
+
+| Connection | Env vars | Where to get them |
+|---|---|---|
+| Gmail + Google Calendar | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google Cloud Console → OAuth client (Web). Enable Gmail API and Calendar API. Gmail scopes need Google verification before public launch. |
+| Outlook + Microsoft 365 | `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET` | Microsoft Entra → App registrations (multitenant + personal accounts). |
+| X | `X_CLIENT_ID`, `X_CLIENT_SECRET` | X developer portal, OAuth 2.0 user context. Posting needs a paid API tier. |
+| Text messages | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM` | Twilio console. Texts are sent from your Twilio number. |
+| Smart home | none | Each user pastes their Home Assistant URL and a long-lived token in the app. |
+
+Not possible from a web app yet: Apple Health / Health Connect and reading your phone's own texts (need a mobile app), and Instagram/Facebook/LinkedIn posting (needs Meta/LinkedIn app review).
+
+**Privacy.** Memory is stored on the user's device and sent with each request. Connection tokens live in encrypted, httpOnly cookies on the user's browser. Nothing is stored on the server.
+
+### Tests
+`npm test` runs the v7 unit tests (access control, verification guards, toolchain detection, personal agent).
 
 ## Three ways to run it
 | | Where it runs | Best for |
@@ -28,7 +60,10 @@ Deploy this folder (the `desktop/`, `local/` and `.github/` folders are ignored 
 | Variable | Purpose |
 |---|---|
 | `ANTHROPIC_API_KEY` | Required. Powers every agent. |
-| `PORTAL_ACCESS_CODE` | Shared access code. Required for Autopilot. |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `SESSION_SECRET` | Sign in with GitHub (v7). Replaces the access code for customers. |
+| `PORTAL_ACCESS_CODE` | Shared access code for scripts/CI, or when sign-in is not set up. |
+| `ALLOW_PUBLIC_ACCESS` | `true` opens model routes without sign-in (public demo). Off by default. |
+| `RATE_LIMIT_PER_MIN` | Requests per minute per visitor per route (default 60). |
 | `GITHUB_TOKEN` | Private repos, PRs, issue import + comments. Fine-grained token: Contents, Pull requests, Issues (read/write). |
 | `GITLAB_TOKEN`, `GITLAB_URL` | GitLab repos, merge requests, issues (`api` scope). `GITLAB_URL` only for self-hosted. |
 | `SLACK_BOT_TOKEN` + `SLACK_CHANNEL` (or `SLACK_WEBHOOK_URL`) | Notifications when PRs open / swarms finish. |

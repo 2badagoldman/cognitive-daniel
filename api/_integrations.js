@@ -1,10 +1,16 @@
 // Integrations: status, ticket import + comment-back (Jira, Linear, GitHub, GitLab), notifications (Slack, Teams, webhook).
 import crypto from 'node:crypto';
+import { authEnabled } from './_auth.js';
 import { gh, gl } from './_git.js';
 
 const env = k => process.env[k] || '';
+export const VERSION = '7.0.0';
 export function integrationStatus() {
   return {
+    version: VERSION,
+    ready: !!env('ANTHROPIC_API_KEY') && (authEnabled() || !!env('PORTAL_ACCESS_CODE') || env('ALLOW_PUBLIC_ACCESS') === 'true'),
+    publicAccess: env('ALLOW_PUBLIC_ACCESS') === 'true',
+    auth: authEnabled() ? 'github' : null,
     anthropic: !!env('ANTHROPIC_API_KEY'),
     accessCode: !!env('PORTAL_ACCESS_CODE'),
     sandbox: env('SANDBOX_DRIVER') === 'local' ? 'local' : 'vercel',

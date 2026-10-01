@@ -6,7 +6,7 @@ export const config = { maxDuration: 300 };
 export default async function handler(req, res) {
   if (cors(req, res)) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (!checkAccess(req, res)) return;
+  if (!checkAccess(req, res, { route: 'chat' })) return;
   const key = requireKey(res); if (!key) return;
 
   const { agentId, messages, repo, context, knowledge, purpose, diff } = req.body || {};

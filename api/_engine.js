@@ -123,10 +123,57 @@ export function withCache(messages) {
   return out;
 }
 
+/* ---------------- V7: verification integrity ---------------- */
+// Test files: the most common way an agent fakes a green run is by editing or deleting the tests.
+const TEST_PATH = /(^|\/)(tests?|__tests__|spec|specs)\/|(^|\/)test_[^/]+\.py$|_test\.(py|go|rb)$|\.(test|spec)\.[cm]?[jt]sx?$|(Test|Tests|IT)\.(java|kt|scala)$|_spec\.rb$/;
+export const isTestPath = p => TEST_PATH.test(String(p || ''));
+// Changes to EXISTING tests are flagged; new test files are encouraged.
+export function testIntegrityViolations(changes = [], { allow = false } = {}) {
+  if (allow) return [];
+  return changes.filter(c => isTestPath(c.path) && (c.status === 'modified' || c.status === 'deleted')).map(c => `${c.status} ${c.path}`);
+}
+// A goal or task that explicitly asks to change tests lifts the guard.
+export const goalAllowsTestEdits = text => /\b(update|rewrite|change|edit|refactor|modify|delete|remove|migrate)\b[^.\n]{0,40}\btests?\b|\btests?\b[^.\n]{0,20}\b(are|is) (wrong|outdated|broken|incorrect)/i.test(String(text || ''));
+// Commands that exit 0 without proving anything.
+export function isTrivialCommand(cmd) {
+  const c = String(cmd || '').trim();
+  if (!c) return false;
+  if (/^(true|:|exit 0|pwd)$/i.test(c) || /^(echo|printf|ls|cat)\b[^&;|]*$/i.test(c)) return true;
+  if (/\|\|\s*(true|:|exit 0)\s*$/i.test(c)) return true;          // "npm test || true"
+  if (/;\s*(true|exit 0)\s*$/i.test(c)) return true;                 // "npm test; true"
+  if (/(--passWithNoTests|-k\s+["']?nonexistent|--testNamePattern\s+["']?\$)/i.test(c)) return true;
+  return false;
+}
+// Detect the toolchains a repo needs from its file list and return a bootstrap script for the sandbox.
+export function detectStacks(listing) {
+  const f = String(listing || '').split('\n').map(x => x.trim()).filter(Boolean);
+  const has = re => f.some(x => re.test(x));
+  return {
+    node: has(/(^|\/)package\.json$/), python: has(/(^|\/)(requirements[^/]*\.txt|pyproject\.toml|setup\.py|Pipfile)$|\.py$/),
+    go: has(/(^|\/)go\.mod$/), java: has(/(^|\/)(pom\.xml|build\.gradle(\.kts)?)$/), maven: has(/(^|\/)pom\.xml$/),
+    gradle: has(/(^|\/)build\.gradle(\.kts)?$/), rust: has(/(^|\/)Cargo\.toml$/), ruby: has(/(^|\/)Gemfile$/)
+  };
+}
+export function toolchainScript(st) {
+  const pk = [];
+  if (st.python) pk.push('python3 python3-pip');
+  if (st.go) pk.push('golang');
+  if (st.java) pk.push('java-17-amazon-corretto-devel');
+  if (st.maven) pk.push('maven');
+  if (st.ruby) pk.push('ruby ruby-devel');
+  const lines = ['set +e', 'SUDO=$(command -v sudo >/dev/null && echo sudo)', 'PM=$(command -v dnf || command -v yum || command -v apt-get)'];
+  const need = { python: 'python3', go: 'go', java: 'java', maven: 'mvn', ruby: 'ruby' };
+  const miss = Object.entries(need).filter(([k]) => st[k]).map(([, bin]) => bin);
+  if (pk.length) lines.push(`MISSING=""; for b in ${miss.join(' ')}; do command -v $b >/dev/null || MISSING="$MISSING $b"; done`, `if [ -n "$MISSING" ]; then echo "Installing toolchains:$MISSING"; case "$PM" in *apt-get) $SUDO $PM update -qq >/dev/null 2>&1; $SUDO $PM install -y -qq ${pk.join(' ').replace('java-17-amazon-corretto-devel', 'openjdk-17-jdk').replace('ruby-devel', 'ruby-dev')} >/dev/null 2>&1;; *) $SUDO $PM install -y -q ${pk.join(' ')} >/dev/null 2>&1;; esac; fi`);
+  if (st.rust) lines.push('command -v cargo >/dev/null || { curl -sSf https://sh.rustup.rs | sh -s -- -y -q --profile minimal >/dev/null 2>&1; }', '[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"');
+  lines.push('echo "Toolchains: $(for t in node python3 go java mvn gradle cargo ruby; do command -v $t >/dev/null && printf "%s " $t; done)"');
+  return lines.join('\n');
+}
+
 const sig = s => { let h = 0; for (const c of String(s).replace(/\d+(\.\d+)?m?s\b/g, '').slice(0, 4000)) h = (h * 31 + c.charCodeAt(0)) | 0; return h; };
 
 /* ---------------- one agent turn ---------------- */
-export async function agentStep({ key, box, system, messages, speed, attempt, stuck, env, extraVerify, bashCapSec = 240, maxTokens = 8000 }) {
+export async function agentStep({ key, box, system, messages, speed, attempt, stuck, env, extraVerify, guardTests = false, bashCapSec = 240, maxTokens = 8000 }) {
   const route = chooseModel({ speed, messages, attempt, stuck });
   const tools = TOOLS.map((t, i) => (i === TOOLS.length - 1 ? { ...t, cache_control: { type: 'ephemeral' } } : t));
   const r = await callAnthropic(key, { model: route.model, max_tokens: maxTokens, system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }], tools, messages: withCache(messages) });
@@ -142,6 +189,20 @@ export async function agentStep({ key, box, system, messages, speed, attempt, st
     if (block.type !== 'tool_use') continue;
     if (block.name === 'finish') {
       const cmd = String(block.input?.test_command || '').trim();
+      if (isTrivialCommand(cmd)) {
+        results.push({ type: 'tool_result', tool_use_id: block.id, is_error: true, content: `Rejected: \`${cmd}\` exits 0 without proving the change. Give the real test command for this project (for example \`npm test\`, \`pytest\`, \`go test ./...\`).` });
+        events.push({ type: 'verify', command: cmd, ok: false, output: 'Rejected: trivial test command.' });
+        continue;
+      }
+      if (guardTests) {
+        const changes = await changedFiles(box, 'HEAD');
+        const bad = testIntegrityViolations(changes);
+        if (bad.length) {
+          results.push({ type: 'tool_result', tool_use_id: block.id, is_error: true, content: `Rejected: the goal does not ask you to change existing tests, but these test files were changed:\n${bad.join('\n')}\nRestore them (git checkout -- <file>) and fix the code under test instead. Adding NEW test files is fine.` });
+          events.push({ type: 'verify', command: '(test integrity)', ok: false, output: `Rejected: existing tests changed — ${bad.join(', ')}` });
+          continue;
+        }
+      }
       const checks = [cmd, extraVerify].filter(Boolean);
       let failed = null;
       for (const c of checks) {
@@ -213,11 +274,11 @@ export async function changedFiles(box, base = 'HEAD') {
 }
 
 /* ---------------- missions: plan → work every task to verified → PR ---------------- */
-export const DEFAULT_SETTINGS = { speed: 'fast', maxStepsPerTask: 25, maxAttempts: 3, maxTasks: 12, budgetUsd: 25, maxMinutes: 240, autoPR: true, setupScript: '', verifyCommand: '', agentName: 'Daniel' };
+export const DEFAULT_SETTINGS = { speed: 'fast', maxStepsPerTask: 25, maxAttempts: 3, maxTasks: 12, budgetUsd: 25, maxMinutes: 240, autoPR: true, setupScript: '', verifyCommand: '', guardTests: true, autoToolchains: true, agentName: 'Daniel' };
 
 export function newMission({ goal, repo, ticket, playbook, knowledge, settings = {}, env = {} }) {
   return {
-    id: 'm_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), version: 6,
+    id: 'm_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), version: 7,
     goal: String(goal), repo, ticket: ticket || null, playbook: playbook || null, knowledge: knowledge || '',
     settings: { ...DEFAULT_SETTINGS, ...settings }, env: env || {},
     phase: 'setup', tasks: [], cur: null, steps: 0, errors: 0,
@@ -261,6 +322,19 @@ export async function advanceMission(state, deps) {
         const probe = await box.exec(`echo "OS: $(uname -sr)"; echo "Tools: $(for t in node npm pnpm yarn python3 pip go cargo java mvn gradle ruby make; do command -v $t >/dev/null && printf "%s " $t; done)"; echo "Node: $(node -v 2>/dev/null)"; echo "Python: $(python3 -V 2>&1)"; echo "Top-level: $(ls -A | head -40 | tr '\\n' ' ')"; echo "Commit: $(git log -1 --format='%h %s' 2>/dev/null)"`, 30000);
         s.envInfo = probe.stdout.trim();
         log({ type: 'info', text: `Workspace ready. ${s.envInfo.split('\n').find(l => l.startsWith('Commit')) || ''}` });
+        return { state: s, events: ev };
+      }
+      if (s.settings.autoToolchains !== false && !s.toolchainsDone) {
+        const box = await S.open(s.taskId);
+        const st = detectStacks((await box.exec('git ls-files | head -2000', 30000)).stdout);
+        if (st.python || st.go || st.java || st.rust || st.ruby) {
+          log({ type: 'info', text: 'Preparing toolchains for this repository…' });
+          const r = await box.exec(toolchainScript(st), 240000, s.env);
+          const line = (r.stdout.match(/Toolchains: .*/) || [''])[0];
+          if (line) s.envInfo = `${s.envInfo}\n${line}`;
+          log({ type: 'tool', name: 'bash', input: { command: '(toolchain bootstrap)' }, ok: r.exitCode === 0, exitCode: r.exitCode, output: `[toolchains]\n${r.stdout}\n${r.stderr}`.slice(0, 6000) });
+        }
+        s.toolchainsDone = true;
         return { state: s, events: ev };
       }
       if (s.settings.setupScript && !s.setupDone) {
@@ -309,7 +383,7 @@ export async function advanceMission(state, deps) {
       }
 
       const system = danielSystem({ repo: s.repo, goal: s.goal, ticket: s.ticket, envInfo: s.envInfo, playbook: s.playbook, knowledge: s.knowledge, name: s.settings.agentName });
-      const r = await agentStep({ key: deps.key, box, system, messages: t.messages, speed: s.settings.speed, attempt: t.attempts, stuck: !!t.stuck, env: s.env, extraVerify: s.settings.verifyCommand, bashCapSec: deps.bashCapSec || 240 });
+      const r = await agentStep({ key: deps.key, box, system, messages: t.messages, speed: s.settings.speed, attempt: t.attempts, stuck: !!t.stuck, env: s.env, extraVerify: s.settings.verifyCommand, guardTests: s.settings.guardTests !== false && !goalAllowsTestEdits(`${s.goal}\n${t.title}\n${t.detail}`), bashCapSec: deps.bashCapSec || 240 });
       addUsage(s.usage, r.tier, r.usage);
       t.steps++; s.steps++; s.errors = 0;
       t.messages.push(r.assistant); if (r.toolMessage) t.messages.push(r.toolMessage);
@@ -358,7 +432,7 @@ export async function advanceMission(state, deps) {
       s.outcome = { done: done.length, blocked: blocked.length, total: s.tasks.length };
       if (!done.length) { s.phase = 'done'; s.finishedAt = Date.now(); log({ type: 'mission', status: 'done', text: 'No task could be completed. See the blocked tasks for what went wrong.' }); return { state: s, events: ev }; }
       const title = (s.ticket ? `${s.ticket.id}: ` : '') + (s.summary || s.goal.split('\n')[0]).slice(0, 110);
-      const body = `${s.summary || s.goal}\n\n### Completed by ${s.settings.agentName}\n${done.map(t => `- [x] **${t.title}**${t.verified ? ` — verified with \`${t.testCommand}\`` : ''}${t.commit ? ` (${t.commit})` : ''}`).join('\n')}${blocked.length ? `\n\n### Still open\n${blocked.map(t => `- [ ] ${t.title}`).join('\n')}` : ''}\n\n---\n_Opened by ${s.settings.agentName}, Cognitive AI. Every task above was verified in an isolated sandbox before commit. Review before merging._`;
+      const body = `${s.summary || s.goal}\n\n### Completed by ${s.settings.agentName}\n${done.map(t => `- [x] **${t.title}**${t.verified ? ` — verified with \`${t.testCommand}\`` : ''}${t.commit ? ` (${t.commit})` : ''}`).join('\n')}${blocked.length ? `\n\n### Still open\n${blocked.map(t => `- [ ] ${t.title}`).join('\n')}` : ''}\n\n---\n_Opened by ${s.settings.agentName}, Cognitive AI. Every task above was verified in an isolated sandbox before commit${s.settings.guardTests !== false ? ', and no existing test was edited to get there' : ''}. Review before merging._`;
       if (s.settings.autoPR && s.repo.provider === 'local' && deps.exportLocal) {
         s.pr = await deps.exportLocal(s, box);
         log({ type: 'pr', ...s.pr });

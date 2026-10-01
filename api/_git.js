@@ -1,3 +1,4 @@
+import { githubToken } from './_auth.js';
 // GitHub + GitLab: parse repo references, load code for context, clone credentials, and open PRs / MRs.
 const GITLAB_HOST = () => (process.env.GITLAB_URL || 'https://gitlab.com').replace(/\/+$/, '');
 
@@ -14,7 +15,7 @@ export function parseRepo(input) {
 
 export function ghHeaders() {
   const h = { accept: 'application/vnd.github+json', 'user-agent': 'cognitive-ai', 'x-github-api-version': '2022-11-28' };
-  if (process.env.GITHUB_TOKEN) h.authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  if (githubToken()) h.authorization = `Bearer ${githubToken()}`;
   return h;
 }
 export function glHeaders() {
@@ -35,7 +36,7 @@ export async function gl(pathname, opts = {}) {
 
 export function cloneInfo(repo) {
   if (repo.provider === 'gitlab') return { cloneUrl: `${GITLAB_HOST()}/${repo.name}.git`, username: 'oauth2', password: process.env.GITLAB_TOKEN || '', publicUrl: `${GITLAB_HOST()}/${repo.name}.git` };
-  return { cloneUrl: `https://github.com/${repo.name}.git`, username: 'x-access-token', password: process.env.GITHUB_TOKEN || '', publicUrl: `https://github.com/${repo.name}.git` };
+  return { cloneUrl: `https://github.com/${repo.name}.git`, username: 'x-access-token', password: githubToken(), publicUrl: `https://github.com/${repo.name}.git` };
 }
 
 /* ---------- repo context loading ---------- */
@@ -71,7 +72,7 @@ export async function loadRepo(ref) {
 async function loadGithub(p) {
   let info;
   try { info = await gh(`/repos/${p.path}`); } catch (e) {
-    if (e.status === 404) throw Object.assign(new Error('Repo not found. If it is private, add a GITHUB_TOKEN in Vercel settings.'), { status: 404 });
+    if (e.status === 404) throw Object.assign(new Error('Repo not found. If it is private, sign in with a GitHub account that can see it.'), { status: 404 });
     if (e.status === 403 || e.status === 429) throw Object.assign(new Error('GitHub rate limit reached. Add a GITHUB_TOKEN in Vercel settings.'), { status: 429 });
     throw e;
   }
@@ -80,7 +81,7 @@ async function loadGithub(p) {
   const blobs = (tree.tree || []).filter(t => t.type === 'blob' && !SKIP_DIR.test(t.path));
   const fetched = await Promise.all(pick(blobs).map(async b => {
     try {
-      if (process.env.GITHUB_TOKEN) {
+      if (githubToken()) {
         const d = await gh(`/repos/${p.path}/contents/${b.path.split('/').map(encodeURIComponent).join('/')}?ref=${encodeURIComponent(branch)}`);
         return { path: b.path, content: Buffer.from(d.content || '', 'base64').toString('utf8').slice(0, 20000) };
       }
@@ -131,7 +132,7 @@ export async function openPullRequest(repo, { branch, title, body, changes }) {
     const mr = await gl(`/projects/${id}/merge_requests`, { method: 'POST', body: JSON.stringify({ source_branch: branch, target_branch: repo.branch, title, description: body, remove_source_branch: true }) });
     return { url: mr.web_url, number: mr.iid, kind: 'merge request' };
   }
-  if (!process.env.GITHUB_TOKEN) throw Object.assign(new Error('Add a GITHUB_TOKEN in Vercel settings to open pull requests.'), { status: 400 });
+  if (!githubToken()) throw Object.assign(new Error('Sign in with GitHub to open pull requests.'), { status: 400 });
   const r = repo.name;
   const baseRef = await gh(`/repos/${r}/git/ref/heads/${encodeURIComponent(repo.branch)}`);
   const baseSha = baseRef.object.sha;

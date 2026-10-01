@@ -12,9 +12,10 @@ import { advanceMission, resumeMission, agentStep, danielSystem, changedFiles } 
 export const config = { maxDuration: 300 };
 const BASH_CAP = Number(process.env.DANIEL_BASH_CAP_SEC || 150); // keeps each call inside the 300 s function limit
 
+import { currentSession } from './_auth.js';
 function allowed(res) {
-  if (process.env.PORTAL_ACCESS_CODE || process.env.ALLOW_PUBLIC_AUTOPILOT === 'true') return true;
-  res.status(403).json({ error: 'Daniel runs code and opens pull requests, so it is locked until you set PORTAL_ACCESS_CODE in Vercel (or ALLOW_PUBLIC_AUTOPILOT=true).' });
+  if (currentSession() || process.env.PORTAL_ACCESS_CODE || process.env.ALLOW_PUBLIC_AUTOPILOT === 'true') return true;
+  res.status(403).json({ error: 'Daniel runs code and opens pull requests, so it needs a signed-in user (Sign in with GitHub), PORTAL_ACCESS_CODE, or ALLOW_PUBLIC_AUTOPILOT=true.' });
   return false;
 }
 const validRepo = r => r && typeof r === 'object' && ['github', 'gitlab'].includes(r.provider) && /^[\w.\-/]+$/.test(r.name || '') && /^[\w.\-/]+$/.test(r.branch || '');
@@ -22,7 +23,7 @@ const validRepo = r => r && typeof r === 'object' && ['github', 'gitlab'].includ
 export default async function handler(req, res) {
   if (cors(req, res)) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (!checkAccess(req, res)) return;
+  if (!checkAccess(req, res, { route: 'task' })) return;
   if (!allowed(res)) return;
   const action = req.query?.action || new URL(req.url, 'http://x').searchParams.get('action');
   const b = req.body || {};
