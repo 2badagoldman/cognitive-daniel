@@ -1,0 +1,19 @@
+display_information:
+  name: Cognitive AI
+  description: Specialist AI agents for engineering and business work
+features:
+  bot_user:
+    display_name: Cognitive
+    always_online: true
+  slash_commands:
+    - command: /cognitive
+      url: https://YOUR-APP.vercel.app/api/slack
+      description: Ask a Cognitive agent (prefix with qa:, devops:, infra:, …)
+      usage_hint: "[agent:] your request"
+oauth_config:
+  scopes:
+    bot: [app_mentions:read, chat:write, commands, im:history]
+settings:
+  event_subscriptions:
+    request_url: https://YOUR-APP.vercel.app/api/slack
+    bot_events: [app_mention, message.im]

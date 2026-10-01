@@ -1,0 +1,30 @@
+{
+  "name": "cognitive-daniel",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@vercel/functions": "^3.0.0",
+    "@vercel/sandbox": "^3.5.1"
+  },
+  "version": "6.0.0",
+  "description": "Daniel by Cognitive AI \u2014 autonomous engineering team. Web app, API, local engine and CLI.",
+  "bin": {
+    "daniel": "local/cli.mjs"
+  },
+  "scripts": {
+    "start": "node local/cli.mjs serve",
+    "daniel": "node local/cli.mjs"
+  },
+  "files": [
+    "index.html",
+    "manifest.webmanifest",
+    "sw.js",
+    "icons",
+    "api",
+    "local",
+    "README.md"
+  ]
+}

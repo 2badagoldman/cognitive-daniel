@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daniel · Cognitive AI</title>
+<meta name="description" content="Cognitive AI — an autonomous engineering team. Daniel, the autonomous engineer, completes whole engineering goals, verifies every task with your tests, and opens pull requests. Plus 16 specialist agents and parallel Swarm pipelines.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234F46E5'/%3E%3Cstop offset='1' stop-color='%23A855F7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Cpath d='M21 11.5a7 7 0 1 0 0 9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='22' cy='16' r='1.8' fill='white'/%3E%3C/svg%3E">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#4F46E5">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF9; --panel: #FFFFFF; --side: #F5F5F4; --hover: rgba(24,24,27,0.05); --active: rgba(24,24,27,0.08);
+    --text: #18181B; --text2: #52525B; --text3: #A1A1AA; --border: #E7E5E4; --border2: #D6D3D1;
+    --accent: #4F46E5; --accent-2: #A855F7; --accent-soft: rgba(79,70,229,0.08); --accent-text: #4338CA;
+    --ok: #059669; --ok-soft: rgba(5,150,105,0.1); --bad: #DC2626; --bad-soft: rgba(220,38,38,0.08); --warn: #B45309; --warn-soft: rgba(217,119,6,0.1);
+    --code-bg: #0F0F14; --code-text: #E4E4E7;
+    --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
+    --shadow-lg: 0 2px 4px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.08);
+    --font: 'Inter', -apple-system, 'Segoe UI', sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --grad: linear-gradient(135deg, #4F46E5, #A855F7);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #0C0C10; --panel: #15151B; --side: #111116; --hover: rgba(255,255,255,0.05); --active: rgba(255,255,255,0.08);
+    --text: #F4F4F5; --text2: #A1A1AA; --text3: #63636E; --border: #26262E; --border2: #34343E;
+    --accent: #818CF8; --accent-2: #C084FC; --accent-soft: rgba(129,140,248,0.12); --accent-text: #A5B4FC;
+    --ok: #34D399; --ok-soft: rgba(52,211,153,0.12); --bad: #F87171; --bad-soft: rgba(248,113,113,0.12); --warn: #FBBF24; --warn-soft: rgba(251,191,36,0.12);
+    --code-bg: #09090C; --shadow: 0 1px 2px rgba(0,0,0,0.3); --shadow-lg: 0 12px 40px rgba(0,0,0,0.5); color-scheme: dark; } }
+  :root[data-theme="dark"] {
+    --bg: #0C0C10; --panel: #15151B; --side: #111116; --hover: rgba(255,255,255,0.05); --active: rgba(255,255,255,0.08);
+    --text: #F4F4F5; --text2: #A1A1AA; --text3: #63636E; --border: #26262E; --border2: #34343E;
+    --accent: #818CF8; --accent-2: #C084FC; --accent-soft: rgba(129,140,248,0.12); --accent-text: #A5B4FC;
+    --ok: #34D399; --ok-soft: rgba(52,211,153,0.12); --bad: #F87171; --bad-soft: rgba(248,113,113,0.12); --warn: #FBBF24; --warn-soft: rgba(251,191,36,0.12);
+    --code-bg: #09090C; --shadow: 0 1px 2px rgba(0,0,0,0.3); --shadow-lg: 0 12px 40px rgba(0,0,0,0.5); color-scheme: dark; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  button { font-family: inherit; font-size: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+  input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; }
+  a { color: var(--accent-text); }
+  ::-webkit-scrollbar { width: 8px; height: 8px; } ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+  /* Brand */
+  .mark { width: 28px; height: 28px; border-radius: 8px; background: var(--grad); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(79,70,229,0.25), 0 4px 14px rgba(99,102,241,0.25); }
+  .mark svg { width: 62%; height: 62%; }
+  .mark.lg { width: 48px; height: 48px; border-radius: 13px; }
+  .wordmark { font-weight: 700; letter-spacing: -0.3px; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 14px; border-radius: 8px; font-weight: 500; font-size: 13px; border: 1px solid var(--border); background: var(--panel); color: var(--text); white-space: nowrap; transition: background .12s, border-color .12s; }
+  .btn:hover { background: var(--hover); border-color: var(--border2); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-dark { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn-dark:hover { background: var(--text); opacity: .88; }
+  .btn-accent { background: var(--grad); color: #fff; border-color: transparent; }
+  .btn-accent:hover { background: var(--grad); opacity: .92; }
+  .btn-danger { color: var(--bad); }
+  .btn-lg { height: 40px; padding: 0 18px; font-size: 14px; }
+  .btn-block { width: 100%; }
+  .icon-btn { width: 30px; height: 30px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center; color: var(--text2); }
+  .icon-btn:hover { background: var(--hover); color: var(--text); }
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); } .pill.bad { background: var(--bad-soft); color: var(--bad); } .pill.warn { background: var(--warn-soft); color: var(--warn); } .pill.muted { background: var(--hover); color: var(--text2); } .pill.accent { background: var(--accent-soft); color: var(--accent-text); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; background: var(--text3); flex-shrink: 0; }
+  .dot.ok { background: var(--ok); } .dot.live { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); animation: pulse 1.4s infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 6px transparent; } }
+
+  /* ---------- Onboarding ---------- */
+  .onboard { position: fixed; inset: 0; z-index: 400; background: var(--bg); display: none; flex-direction: column; overflow-y: auto; }
+  .onboard.open { display: flex; }
+  .onboard::before { content: ''; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(900px 500px at 70% -10%, rgba(99,102,241,0.10), transparent 60%), radial-gradient(700px 400px at -10% 110%, rgba(168,85,247,0.08), transparent 60%); }
+  .ob-top { display: flex; align-items: center; gap: 10px; padding: 18px 24px; position: relative; }
+  .ob-steps { margin-left: auto; display: flex; gap: 6px; }
+  .ob-steps span { width: 22px; height: 3px; border-radius: 3px; background: var(--border2); }
+  .ob-steps span.on { background: var(--accent); }
+  .ob-body { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 20px 60px; position: relative; }
+  .ob-card { width: 100%; max-width: 540px; }
+  .ob-card h1 { font-size: 30px; line-height: 1.2; letter-spacing: -0.8px; font-weight: 700; margin: 22px 0 10px; }
+  .ob-card p.sub { color: var(--text2); font-size: 15px; line-height: 1.6; margin-bottom: 26px; }
+  .choice { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 14px; border: 1px solid var(--border); background: var(--panel); border-radius: 10px; margin-bottom: 8px; transition: border-color .12s, background .12s; }
+  .choice:hover { border-color: var(--border2); }
+  .choice.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .choice .ci { width: 30px; height: 30px; border-radius: 8px; background: var(--hover); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .choice b { font-weight: 600; display: block; } .choice small { color: var(--text2); font-size: 12.5px; }
+  .provider { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 44px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); font-weight: 600; margin-bottom: 10px; }
+  .provider:hover { border-color: var(--border2); }
+  .provider.dark { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .field { width: 100%; height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); outline: none; }
+  .field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .ob-foot { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+  .link-btn { color: var(--text2); font-weight: 500; }
+  .link-btn:hover { color: var(--text); }
+  .feat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 28px; }
+  .feat { border: 1px solid var(--border); background: var(--panel); border-radius: 12px; padding: 12px; }
+  .feat b { display: block; font-size: 13px; margin: 6px 0 2px; } .feat small { color: var(--text2); font-size: 12px; line-height: 1.45; display: block; }
+
+  /* ---------- App shell ---------- */
+  .app { display: flex; height: 100vh; }
+  .side { width: 264px; flex-shrink: 0; background: var(--side); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+  .side-head { display: flex; align-items: center; gap: 8px; padding: 12px 12px 8px; }
+  .ws { display: flex; align-items: center; gap: 8px; padding: 5px 8px 5px 5px; border-radius: 8px; min-width: 0; flex: 1; }
+  .ws:hover { background: var(--hover); }
+  .ws-name { font-weight: 600; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nav { padding: 4px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 7px 10px; border-radius: 8px; color: var(--text2); font-weight: 500; font-size: 13.5px; text-align: left; }
+  .nav-item:hover { background: var(--hover); color: var(--text); }
+  .nav-item.on { background: var(--active); color: var(--text); }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-item.primary { color: var(--text); }
+  .nav-item .kbd { margin-left: auto; font-size: 11px; color: var(--text3); font-family: var(--mono); }
+  .side-sec { display: flex; align-items: center; padding: 14px 18px 6px; font-size: 12px; font-weight: 600; color: var(--text3); }
+  .side-sec .icon-btn { margin-left: auto; width: 24px; height: 24px; }
+  .sessions { flex: 1; overflow-y: auto; padding: 0 8px 8px; min-height: 0; }
+  .sess { display: flex; align-items: center; gap: 8px; width: 100%; padding: 6px 10px; border-radius: 8px; text-align: left; color: var(--text2); font-size: 13px; }
+  .sess:hover { background: var(--hover); color: var(--text); }
+  .sess.on { background: var(--active); color: var(--text); }
+  .sess span.t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sess .ty { font-size: 13px; width: 16px; text-align: center; flex-shrink: 0; }
+  .empty-s { color: var(--text3); font-size: 12.5px; padding: 6px 10px; }
+  .side-foot { border-top: 1px solid var(--border); padding: 10px 12px; display: flex; align-items: center; gap: 8px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--grad); color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .who { min-width: 0; flex: 1; line-height: 1.3; }
+  .who b { font-size: 13px; font-weight: 600; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .who small { color: var(--text3); font-size: 11.5px; }
+
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--bg); }
+  .topbar { height: 52px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid var(--border); }
+  .topbar.bare { border-bottom-color: transparent; }
+  .crumb { font-weight: 600; font-size: 14px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .crumb small { color: var(--text3); font-weight: 500; margin-left: 6px; }
+  .top-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .menu-btn { display: none; }
+  .view { flex: 1; min-height: 0; overflow-y: auto; }
+
+  /* ---------- Home / composer ---------- */
+  .home { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px 80px; position: relative; }
+  .home::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(600px 300px at 50% 30%, var(--accent-soft), transparent 70%); opacity: .8; }
+  .home-inner { width: 100%; max-width: 720px; position: relative; }
+  .home-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .home-head .wordmark { font-size: 22px; }
+  .seg { margin-left: auto; display: inline-flex; background: var(--hover); border-radius: 9px; padding: 3px; }
+  .seg button { padding: 5px 12px; border-radius: 7px; font-size: 13px; font-weight: 500; color: var(--text2); }
+  .seg button.on { background: var(--panel); color: var(--text); box-shadow: var(--shadow); }
+  .composer { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow-lg); transition: border-color .15s, box-shadow .15s; }
+  .composer:focus-within { border-color: var(--border2); box-shadow: var(--shadow-lg), 0 0 0 4px var(--accent-soft); }
+  .composer textarea { display: block; width: 100%; border: none; outline: none; resize: none; background: transparent; padding: 16px 18px 6px; font-size: 15px; line-height: 1.55; min-height: 64px; max-height: 260px; }
+  .composer textarea::placeholder { color: var(--text3); }
+  .comp-bar { display: flex; align-items: center; gap: 6px; padding: 8px 10px 10px 12px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 12.5px; font-weight: 500; color: var(--text2); max-width: 240px; background: var(--panel); }
+  .chip:hover { color: var(--text); border-color: var(--border2); }
+  .chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip.on { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
+  .chip svg { width: 14px; height: 14px; flex-shrink: 0; }
+  select.chip { appearance: none; padding-right: 26px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 9px center; cursor: pointer; outline: none; }
+  .send { margin-left: auto; width: 34px; height: 34px; border-radius: 10px; background: var(--text); color: var(--bg); display: inline-flex; align-items: center; justify-content: center; transition: opacity .12s; }
+  .send:disabled { opacity: .3; cursor: not-allowed; }
+  .send.stop { background: var(--bad-soft); color: var(--bad); }
+  .hint { font-size: 12px; color: var(--text3); margin: 10px 4px 0; display: flex; gap: 12px; flex-wrap: wrap; }
+  .suggest { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .sug { padding: 7px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--panel); font-size: 12.5px; color: var(--text2); text-align: left; }
+  .sug:hover { color: var(--text); border-color: var(--border2); }
+  .ticket-mini { margin: 10px 0 0; display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text2); background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+
+  /* ---------- Session content ---------- */
+  .content { max-width: 860px; margin: 0 auto; padding: 24px 24px 40px; }
+  .dock { flex-shrink: 0; padding: 10px 24px 18px; }
+  .dock .composer { max-width: 860px; margin: 0 auto; box-shadow: var(--shadow); }
+  .dock .composer textarea { min-height: 48px; padding: 12px 16px 4px; font-size: 14.5px; }
+
+  .msg { display: flex; gap: 12px; margin-bottom: 22px; }
+  .msg .av { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: var(--hover); }
+  .msg .body { min-width: 0; flex: 1; }
+  .msg .who-l { font-size: 12.5px; font-weight: 600; margin-bottom: 3px; color: var(--text2); }
+  .msg.user .bubble { display: inline-block; background: var(--hover); border-radius: 12px; padding: 9px 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg .bubble { font-size: 14.5px; line-height: 1.65; overflow-wrap: anywhere; }
+
+  .md > *:first-child { margin-top: 0; } .md > *:last-child { margin-bottom: 0; }
+  .md p { margin: 0 0 10px; }
+  .md h1, .md h2, .md h3, .md h4 { margin: 18px 0 8px; line-height: 1.3; letter-spacing: -0.2px; }
+  .md h1 { font-size: 19px; } .md h2 { font-size: 17px; } .md h3 { font-size: 15px; } .md h4 { font-size: 14px; color: var(--text2); }
+  .md ul, .md ol { margin: 0 0 10px 22px; } .md li { margin: 3px 0; }
+  .md blockquote { border-left: 3px solid var(--border2); padding: 2px 12px; color: var(--text2); margin: 0 0 10px; }
+  .md hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .md code { background: var(--hover); padding: 1px 5px; border-radius: 5px; font-family: var(--mono); font-size: 12.5px; }
+  .md table { border-collapse: collapse; margin: 0 0 12px; font-size: 13px; display: block; overflow-x: auto; }
+  .md th, .md td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; vertical-align: top; }
+  .md th { background: var(--hover); font-weight: 600; }
+  .code { background: var(--code-bg); border-radius: 10px; margin: 8px 0 12px; overflow: hidden; border: 1px solid var(--border); }
+  .code-head { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px 6px 14px; font-size: 11px; color: #8A8A96; font-family: var(--mono); border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .copy-btn { color: #A1A1AA; font-size: 11px; padding: 3px 8px; border-radius: 6px; }
+  .copy-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .code pre { margin: 0; padding: 12px 14px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.55; color: var(--code-text); }
+  .code pre code { background: none; padding: 0; color: inherit; }
+  .cursor::after { content: '▍'; color: var(--accent); animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .typing { display: inline-flex; gap: 4px; padding: 6px 0; }
+  .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); animation: bounce 1.2s infinite; }
+  .typing i:nth-child(2) { animation-delay: .2s; } .typing i:nth-child(3) { animation-delay: .4s; }
+  @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
+  .card-pad { padding: 16px 18px; }
+  .label { font-size: 11.5px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--text3); }
+  .run-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; }
+  .stat { font-size: 12.5px; color: var(--text2); display: inline-flex; align-items: center; gap: 6px; }
+  .stat b { color: var(--text); font-weight: 600; }
+  .run-actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+  .task-line { color: var(--text2); font-size: 13.5px; margin: 14px 2px 6px; }
+  .timeline { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .ev-text { font-size: 14px; line-height: 1.6; padding: 2px 2px; }
+  .ev { border: 1px solid var(--border); background: var(--panel); border-radius: 10px; overflow: hidden; }
+  .ev summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
+  .ev summary::-webkit-details-marker { display: none; }
+  .ev-i { width: 20px; text-align: center; color: var(--text3); flex-shrink: 0; font-size: 13px; }
+  .ev-l { flex: 1; min-width: 0; font-family: var(--mono); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ev pre { margin: 0; padding: 10px 12px; border-top: 1px solid var(--border); background: var(--code-bg); color: #CBD5E1; font-family: var(--mono); font-size: 12px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; max-height: 360px; overflow: auto; }
+  .ev.verify { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+  .info-line { font-size: 12.5px; color: var(--text3); padding: 0 2px; }
+  .notice { border-radius: 10px; padding: 10px 12px; font-size: 13px; line-height: 1.5; border: 1px solid var(--border); background: var(--panel); }
+  .notice.warn { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
+  .notice.ok { background: var(--ok-soft); border-color: transparent; color: var(--ok); }
+  .finish { border: 1px solid color-mix(in srgb, var(--ok) 35%, var(--border)); background: var(--ok-soft); border-radius: 12px; padding: 14px 16px; }
+  .finish h3 { font-size: 14.5px; margin-bottom: 8px; color: var(--ok); }
+  .diff { margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--code-bg); max-height: 520px; overflow: auto; }
+  .diff pre { margin: 0; padding: 10px 0; font-family: var(--mono); font-size: 12px; line-height: 1.5; color: #D4D4D8; }
+  .diff .l { display: block; padding: 0 12px; white-space: pre; } .diff .a { background: rgba(16,185,129,0.14); color: #A7F3D0; } .diff .d { background: rgba(239,68,68,0.14); color: #FECACA; } .diff .h { color: #93C5FD; } .diff .f { color: #E9D5FF; font-weight: 600; }
+  .pr { margin-top: 12px; border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); background: var(--accent-soft); border-radius: 12px; padding: 14px 16px; }
+  .pr a { font-weight: 600; }
+
+  .pipeline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; }
+  .pstep { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 12.5px; font-weight: 500; color: var(--text2); background: var(--panel); }
+  .pstep.running { border-color: var(--accent); color: var(--accent-text); } .pstep.done { border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); color: var(--ok); } .pstep.failed { border-color: var(--bad); color: var(--bad); }
+  .parrow { color: var(--text3); font-size: 12px; }
+  .stage-l { margin: 22px 2px 8px; }
+  .stage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .step { overflow: hidden; }
+  .step-h { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--border); }
+  .step-h .ag { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .step-name { font-weight: 600; font-size: 13.5px; }
+  .step-ins { font-size: 12px; color: var(--text2); margin-top: 1px; }
+  .step-h .pill { margin-left: auto; }
+  .step-b { padding: 12px 14px; font-size: 14px; line-height: 1.6; max-height: 480px; overflow-y: auto; }
+  .step-b:empty { display: none; }
+
+  /* ---------- Agents directory ---------- */
+  .grid-ag { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+  .ag-card { text-align: left; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel); transition: border-color .12s, transform .12s; }
+  .ag-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+  .ag-card .ag { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; margin-bottom: 10px; }
+  .ag-card b { display: block; font-size: 13.5px; } .ag-card small { color: var(--text2); font-size: 12.5px; line-height: 1.45; display: block; margin-top: 2px; }
+  .page-h { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  .page-sub { color: var(--text2); margin: 4px 0 20px; }
+
+  /* ---------- Settings ---------- */
+  .settings { display: flex; min-height: 100%; }
+  .set-nav { width: 220px; flex-shrink: 0; border-right: 1px solid var(--border); padding: 16px 10px; }
+  .set-body { flex: 1; min-width: 0; padding: 28px 32px 60px; }
+  .set-wrap { max-width: 760px; margin: 0 auto; }
+  .row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .row:last-child { border-bottom: none; }
+  .row .ri { width: 32px; height: 32px; border-radius: 8px; background: var(--hover); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .row .rt { flex: 1; min-width: 0; } .row .rt b { font-weight: 600; display: block; } .row .rt small { color: var(--text2); font-size: 12.5px; line-height: 1.5; display: block; }
+  .row code { font-family: var(--mono); font-size: 11.5px; background: var(--hover); padding: 1px 5px; border-radius: 4px; }
+  .sec-title { font-weight: 600; margin: 26px 0 4px; } .sec-sub { color: var(--text2); font-size: 13px; margin-bottom: 10px; }
+
+  /* ---------- Plans ---------- */
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .plan { display: flex; flex-direction: column; padding: 20px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel); position: relative; }
+  .plan.pop { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-lg); }
+  .plan .tag { position: absolute; top: -10px; left: 18px; background: var(--grad); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
+  .plan h3 { font-size: 15px; font-weight: 600; }
+  .price { font-size: 32px; font-weight: 700; letter-spacing: -1px; margin: 8px 0 0; }
+  .price small { font-size: 13px; font-weight: 500; color: var(--text2); letter-spacing: 0; }
+  .plan .for { color: var(--text2); font-size: 13px; margin: 6px 0 16px; min-height: 38px; }
+  .plan ul { list-style: none; flex: 1; margin-bottom: 18px; }
+  .plan li { display: flex; gap: 8px; font-size: 13px; padding: 4px 0; color: var(--text); }
+  .plan li::before { content: ''; width: 14px; height: 14px; flex-shrink: 0; margin-top: 3px; background: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E"); }
+  .ent { margin-top: 14px; display: flex; align-items: center; gap: 16px; padding: 18px 20px; flex-wrap: wrap; }
+  .ent .rt { flex: 1; min-width: 240px; }
+
+  /* Wiki / review / customize */
+  .toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .toolbar .field { flex: 1; min-width: 220px; height: 38px; }
+  .doc { font-size: 14.5px; line-height: 1.7; }
+  .doc h1 { font-size: 24px; letter-spacing: -0.5px; } .doc h2 { font-size: 18px; margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .pr-meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--text2); margin-top: 6px; }
+  .pb { display: flex; gap: 12px; align-items: flex-start; }
+  .pb textarea, .kn { width: 100%; min-height: 120px; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; background: var(--panel); outline: none; resize: vertical; line-height: 1.55; font-size: 13.5px; }
+  .pb textarea:focus, .kn:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .route { display: inline-flex; gap: 4px; }
+  .route .pill { font-weight: 500; }
+  .empty { text-align: center; padding: 60px 20px; color: var(--text2); }
+  .empty .mark { margin-bottom: 14px; }
+
+  /* v6: missions, tiles, tables, settings */
+  .tasks { margin-top: 12px; overflow: hidden; }
+  .task-row { display: flex; gap: 12px; align-items: flex-start; padding: 10px 14px; border-top: 1px solid var(--border); }
+  .task-row:first-child, .tasks .label + .task-row { border-top: none; }
+  .task-row .rt b { font-weight: 600; font-size: 13.5px; } .task-row .rt small { display: block; color: var(--text2); font-size: 12px; margin-top: 1px; }
+  .task-row.done .rt b { color: var(--text2); }
+  .task-row code { font-family: var(--mono); font-size: 11.5px; }
+  .tk { width: 18px; height: 18px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; border-radius: 50%; margin-top: 1px; }
+  .tk.ok { background: var(--ok-soft); color: var(--ok); } .tk.bad { background: var(--bad-soft); color: var(--bad); } .tk.pend { color: var(--text3); }
+  .tk.run { border: 2px solid var(--accent-soft); border-top-color: var(--accent); animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .task-div { margin: 14px 2px 2px; font-size: 12px; font-weight: 700; letter-spacing: .4px; color: var(--accent-text); text-transform: uppercase; }
+  .limits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .limits label { font-size: 12px; color: var(--text2); display: flex; flex-direction: column; gap: 4px; }
+  .limits .field { height: 36px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .tile { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+  .tile-v { font-size: 24px; font-weight: 700; letter-spacing: -0.6px; } .tile-k { font-size: 12.5px; color: var(--text2); margin-top: 2px; } .tile-s { font-size: 11.5px; color: var(--text3); margin-top: 2px; }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th, .tbl td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .tbl th { font-size: 11.5px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .set-group { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; padding: 14px 10px 6px; }
+  .set-group:first-child { padding-top: 4px; }
+  kbd { font-family: var(--mono); font-size: 11.5px; padding: 2px 7px; border-radius: 6px; border: 1px solid var(--border2); background: var(--panel); box-shadow: 0 1px 0 var(--border2); }
+  .switch { position: relative; width: 38px; height: 22px; flex-shrink: 0; } .switch input { opacity: 0; width: 0; height: 0; }
+  .switch span { position: absolute; inset: 0; background: var(--border2); border-radius: 22px; cursor: pointer; transition: .15s; }
+  .switch span::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .15s; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+  .switch input:checked + span { background: var(--accent); } .switch input:checked + span::before { transform: translateX(16px); }
+  .switch input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .only-knowledge .pb-sec, .only-playbooks .kn-sec { display: none; }
+  .only-playbooks .pb-sec .sec-title { margin-top: 0 !important; }
+  @media (max-width: 860px) { .limits { grid-template-columns: 1fr 1fr; } .set-group { display: none; } }
+
+  /* Toast, modal */
+  .toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%, 10px); background: var(--text); color: var(--bg); padding: 9px 14px; border-radius: 10px; font-size: 13px; z-index: 500; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; max-width: 90vw; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .scrim { display: none; }
+
+  @media (max-width: 860px) {
+    .side { position: fixed; inset: 0 auto 0 0; z-index: 200; transform: translateX(-100%); transition: transform .2s; box-shadow: var(--shadow-lg); }
+    body.nav-open .side { transform: none; }
+    body.nav-open .scrim { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 150; }
+    .menu-btn { display: inline-flex; }
+    .content { padding: 18px 16px 30px; } .dock { padding: 8px 12px 12px; }
+    .home { padding: 24px 16px 60px; justify-content: flex-start; padding-top: 12vh; }
+    .home-head { flex-wrap: wrap; } .seg { margin-left: 0; }
+    .plans { grid-template-columns: 1fr; }
+    .settings { flex-direction: column; } .set-nav { width: auto; border-right: none; border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; padding: 8px; }
+    .set-nav .nav-item { width: auto; white-space: nowrap; }
+    .set-body { padding: 20px 16px 40px; }
+    .feat-row { grid-template-columns: 1fr; }
+    .ob-card h1 { font-size: 25px; }
+    .top-actions .hide-sm { display: none; }
+    .run-actions { margin-left: 0; }
+    .stage-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= Onboarding ================= -->
+<div class="onboard" id="onboard" role="dialog" aria-modal="true" aria-label="Welcome">
+  <div class="ob-top"><span class="mark" id="obMark"></span><span class="wordmark">Cognitive AI</span><div class="ob-steps" id="obSteps"></div></div>
+  <div class="ob-body"><div class="ob-card" id="obCard"></div></div>
+</div>
+
+<!-- ================= App ================= -->
+<div class="app" id="app">
+  <aside class="side" id="side">
+    <div class="side-head">
+      <button class="ws" id="wsBtn" title="Workspace settings"><span class="mark" id="sideMark"></span><span class="ws-name" id="wsName">Cognitive AI</span></button>
+      <button class="icon-btn" id="collapseBtn" title="Close sidebar" aria-label="Close sidebar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+    </div>
+    <nav class="nav">
+      <button class="nav-item primary" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New session<span class="kbd">N</span></button>
+      <button class="nav-item" data-nav="wiki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>Wiki</button>
+      <button class="nav-item" data-nav="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M6 8.5v7M18 15.5V9a3 3 0 0 0-3-3h-4"/><path d="m13 3-2 3 2 3"/></svg>Review</button>
+      <button class="nav-item" data-nav="analytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</button>
+      <button class="nav-item" data-nav="benchmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 13l4-3M9 2h6"/></svg>Benchmark</button>
+      <button class="nav-item" data-nav="agents"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c2.8-.4 6 1.4 6 5.5"/></svg>Agents</button>
+      <button class="nav-item" data-nav="customize"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Customize</button>
+      <button class="nav-item" data-nav="connections"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>Connections</button>
+      <button class="nav-item" data-nav="plans"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Plans</button>
+    </nav>
+    <div class="side-sec">Sessions<button class="icon-btn" id="newSessBtn" title="New session" aria-label="New session"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button></div>
+    <div class="sessions" id="sessions"></div>
+    <div class="side-foot">
+      <div class="avatar" id="avatar">C</div>
+      <div class="who"><b id="whoName">Guest</b><small id="whoPlan">Free preview</small></div>
+      <button class="icon-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+      <button class="icon-btn" data-nav="settings" title="Settings" aria-label="Settings"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main class="main">
+    <div class="topbar" id="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <button class="icon-btn" id="openSideBtn" style="display:none" aria-label="Open sidebar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <div class="crumb" id="crumb"></div>
+      <div class="top-actions" id="topActions"></div>
+    </div>
+    <div class="view" id="view"></div>
+    <div id="dock"></div>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const AGENTS = [
+  {
+    id: 'engineer',
+    name: 'Cognitive Engineer',
+    icon: '⚙️',
+    color: '#7C3AED',
+    colorLight: 'rgba(124,58,237,0.15)',
+    tagline: 'Autonomous code writer, bug fixer & PR generator',
+    caps: [
+      { label: 'Write code', color: '#7C3AED', bg: 'rgba(124,58,237,0.15)' },
+      { label: 'Fix bugs', color: '#7C3AED', bg: 'rgba(124,58,237,0.15)' },
+      { label: 'Generate PRs', color: '#7C3AED', bg: 'rgba(124,58,237,0.15)' },
+      { label: 'Code review', color: '#7C3AED', bg: 'rgba(124,58,237,0.15)' },
+    ],
+    starters: ['Review this Python function for bugs', 'Write a REST API endpoint in Node.js', 'Refactor this code for performance', 'Explain this codebase architecture']
+  },
+  {
+    id: 'pm',
+    name: 'Cognitive PM',
+    icon: '📋',
+    color: '#3B82F6',
+    colorLight: 'rgba(59,130,246,0.15)',
+    tagline: 'Status reports, risk logs & executive updates',
+    caps: [
+      { label: 'Status reports', color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+      { label: 'Risk tracking', color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+      { label: 'Exec updates', color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+      { label: 'Sprint planning', color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+    ],
+    starters: ['Write a weekly status report for my program', 'Create a RAID log for my project', 'Draft an executive steering committee update', 'Build a project charter template']
+  },
+  {
+    id: 'ba',
+    name: 'Cognitive BA',
+    icon: '📐',
+    color: '#14B8A6',
+    colorLight: 'rgba(20,184,166,0.15)',
+    tagline: 'BRDs, user stories & acceptance criteria',
+    caps: [
+      { label: 'BRDs', color: '#14B8A6', bg: 'rgba(20,184,166,0.15)' },
+      { label: 'User stories', color: '#14B8A6', bg: 'rgba(20,184,166,0.15)' },
+      { label: 'Acceptance criteria', color: '#14B8A6', bg: 'rgba(20,184,166,0.15)' },
+      { label: 'Process flows', color: '#14B8A6', bg: 'rgba(20,184,166,0.15)' },
+    ],
+    starters: ['Write a BRD for a mobile app login feature', 'Generate user stories for an e-commerce checkout', 'Create acceptance criteria for an API integration', 'Map a current vs future state process']
+  },
+  {
+    id: 'legal',
+    name: 'Cognitive Legal',
+    icon: '⚖️',
+    color: '#6366F1',
+    colorLight: 'rgba(99,102,241,0.15)',
+    tagline: 'Contract review, NDA drafting & clause analysis',
+    caps: [
+      { label: 'Contract review', color: '#6366F1', bg: 'rgba(99,102,241,0.15)' },
+      { label: 'NDA drafting', color: '#6366F1', bg: 'rgba(99,102,241,0.15)' },
+      { label: 'Clause flagging', color: '#6366F1', bg: 'rgba(99,102,241,0.15)' },
+      { label: 'Legal summaries', color: '#6366F1', bg: 'rgba(99,102,241,0.15)' },
+    ],
+    starters: ['Review this contract for risky clauses', 'Draft a mutual NDA for a tech partnership', 'Summarize key terms in plain English', 'Flag indemnification and liability issues']
+  },
+  {
+    id: 'finance',
+    name: 'Cognitive Finance',
+    icon: '📊',
+    color: '#10B981',
+    colorLight: 'rgba(16,185,129,0.15)',
+    tagline: 'Financial analysis, investor memos & model summaries',
+    caps: [
+      { label: 'Financial analysis', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+      { label: 'Investor memos', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+      { label: 'Model summaries', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+      { label: 'Earnings analysis', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+    ],
+    starters: ['Analyze this P&L and flag anomalies', 'Write an investor memo for a Series A raise', 'Summarize this 10-K in 5 key points', 'Build a unit economics framework for a SaaS']
+  },
+  {
+    id: 'recruiter',
+    name: 'Cognitive Recruiter',
+    icon: '🎯',
+    color: '#F97316',
+    colorLight: 'rgba(249,115,22,0.15)',
+    tagline: 'Resume screening, interview prep & candidate scoring',
+    caps: [
+      { label: 'Resume screening', color: '#F97316', bg: 'rgba(249,115,22,0.15)' },
+      { label: 'Interview questions', color: '#F97316', bg: 'rgba(249,115,22,0.15)' },
+      { label: 'Candidate scoring', color: '#F97316', bg: 'rgba(249,115,22,0.15)' },
+      { label: 'Job descriptions', color: '#F97316', bg: 'rgba(249,115,22,0.15)' },
+    ],
+    starters: ['Score this resume against a PM job description', 'Write interview questions for a software engineer', 'Draft a job description for a Product Manager', 'Summarize top 3 candidates from these profiles']
+  },
+  {
+    id: 'content',
+    name: 'Cognitive Content',
+    icon: '✍️',
+    color: '#EC4899',
+    colorLight: 'rgba(236,72,153,0.15)',
+    tagline: 'Blog posts, marketing copy & email sequences',
+    caps: [
+      { label: 'Blog posts', color: '#EC4899', bg: 'rgba(236,72,153,0.15)' },
+      { label: 'Marketing copy', color: '#EC4899', bg: 'rgba(236,72,153,0.15)' },
+      { label: 'Email sequences', color: '#EC4899', bg: 'rgba(236,72,153,0.15)' },
+      { label: 'Social content', color: '#EC4899', bg: 'rgba(236,72,153,0.15)' },
+    ],
+    starters: ['Write a blog post about AI automation trends', 'Create a 5-email welcome sequence for a SaaS', 'Write LinkedIn content for a product launch', 'Draft a landing page headline and subheadline']
+  },
+  {
+    id: 'support',
+    name: 'Cognitive Support',
+    icon: '🎧',
+    color: '#F59E0B',
+    colorLight: 'rgba(245,158,11,0.15)',
+    tagline: 'Tier-1 ticket handling & knowledge base responses',
+    caps: [
+      { label: 'Ticket drafts', color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+      { label: 'KB articles', color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+      { label: 'Escalation logic', color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+      { label: 'Canned replies', color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+    ],
+    starters: ['Draft a response to a billing dispute ticket', 'Write a KB article for a password reset process', 'Create canned replies for the 5 most common issues', 'Build an escalation decision tree']
+  },
+  {
+    id: 'revenue',
+    name: 'Cognitive Revenue',
+    icon: '💰',
+    color: '#8B5CF6',
+    colorLight: 'rgba(139,92,246,0.15)',
+    tagline: 'Prospect research, outreach drafts & call prep',
+    caps: [
+      { label: 'Prospect research', color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)' },
+      { label: 'Cold outreach', color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)' },
+      { label: 'Call prep', color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)' },
+      { label: 'Pipeline analysis', color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)' },
+    ],
+    starters: ['Research Stripe as a sales prospect', 'Write a cold outreach email to a VP of Engineering', 'Prep me for a discovery call with a fintech CTO', 'Analyze my pipeline and flag at-risk deals']
+  },
+  {
+    id: 'compliance',
+    name: 'Cognitive Compliance',
+    icon: '🛡️',
+    color: '#EF4444',
+    colorLight: 'rgba(239,68,68,0.15)',
+    tagline: 'Policy audits, gap analysis & risk reports',
+    caps: [
+      { label: 'Policy audits', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+      { label: 'Gap analysis', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+      { label: 'Risk reports', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+      { label: 'Framework mapping', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+    ],
+    starters: ['Audit this policy against SOC 2 Type II controls', 'Identify HIPAA compliance gaps in this process', 'Write a risk assessment report for a data migration', 'Map our controls to PCI-DSS requirements']
+  },
+  {
+    id: 'qa',
+    name: 'Cognitive QA',
+    icon: '🔍',
+    color: '#22C55E',
+    colorLight: 'rgba(34,197,94,0.15)',
+    tagline: 'Test strategy, test plans & defect triage',
+    caps: [
+      { label: 'Test plans', color: '#22C55E', bg: 'rgba(34,197,94,0.15)' },
+      { label: 'Test cases', color: '#22C55E', bg: 'rgba(34,197,94,0.15)' },
+      { label: 'Defect triage', color: '#22C55E', bg: 'rgba(34,197,94,0.15)' },
+      { label: 'Release readiness', color: '#22C55E', bg: 'rgba(34,197,94,0.15)' }
+    ],
+    starters: ['Write a test plan for a new checkout flow', 'Generate test cases for a login API', 'Triage and prioritize these bug reports', 'Build a release readiness checklist']
+  },
+  {
+    id: 'testing',
+    name: 'Cognitive Test Automation',
+    icon: '🧪',
+    color: '#84CC16',
+    colorLight: 'rgba(132,204,22,0.15)',
+    tagline: 'Unit, integration & end-to-end test code',
+    caps: [
+      { label: 'Unit tests', color: '#84CC16', bg: 'rgba(132,204,22,0.15)' },
+      { label: 'Integration tests', color: '#84CC16', bg: 'rgba(132,204,22,0.15)' },
+      { label: 'E2E tests', color: '#84CC16', bg: 'rgba(132,204,22,0.15)' },
+      { label: 'Coverage gaps', color: '#84CC16', bg: 'rgba(132,204,22,0.15)' }
+    ],
+    starters: ['Write Jest unit tests for this function', 'Create a Playwright E2E test for sign-up', 'Write pytest tests for this API endpoint', 'Find coverage gaps in this module']
+  },
+  {
+    id: 'devops',
+    name: 'Cognitive DevOps',
+    icon: '🔁',
+    color: '#0EA5E9',
+    colorLight: 'rgba(14,165,233,0.15)',
+    tagline: 'CI/CD pipelines, build automation & containers',
+    caps: [
+      { label: 'CI/CD pipelines', color: '#0EA5E9', bg: 'rgba(14,165,233,0.15)' },
+      { label: 'Dockerfiles', color: '#0EA5E9', bg: 'rgba(14,165,233,0.15)' },
+      { label: 'Build automation', color: '#0EA5E9', bg: 'rgba(14,165,233,0.15)' },
+      { label: 'Pipeline debugging', color: '#0EA5E9', bg: 'rgba(14,165,233,0.15)' }
+    ],
+    starters: ['Write a GitHub Actions pipeline for a Node app', 'Create a production Dockerfile for a Python API', 'Why is my CI pipeline failing? (paste logs)', 'Set up branch protection and PR checks']
+  },
+  {
+    id: 'deploy',
+    name: 'Cognitive Deployment',
+    icon: '🚀',
+    color: '#A855F7',
+    colorLight: 'rgba(168,85,247,0.15)',
+    tagline: 'Release plans, rollouts & rollback runbooks',
+    caps: [
+      { label: 'Release plans', color: '#A855F7', bg: 'rgba(168,85,247,0.15)' },
+      { label: 'Blue/green & canary', color: '#A855F7', bg: 'rgba(168,85,247,0.15)' },
+      { label: 'Rollback runbooks', color: '#A855F7', bg: 'rgba(168,85,247,0.15)' },
+      { label: 'Cutover checklists', color: '#A855F7', bg: 'rgba(168,85,247,0.15)' }
+    ],
+    starters: ['Write a production cutover plan with rollback', 'Design a canary rollout for a new API version', 'Create a deployment runbook for a database migration', 'Draft a change request for CAB approval']
+  },
+  {
+    id: 'infra',
+    name: 'Cognitive Infra',
+    icon: '🏗️',
+    color: '#64748B',
+    colorLight: 'rgba(100,116,139,0.15)',
+    tagline: 'Cloud architecture, IaC & cost optimization',
+    caps: [
+      { label: 'Terraform / IaC', color: '#64748B', bg: 'rgba(100,116,139,0.15)' },
+      { label: 'Cloud architecture', color: '#64748B', bg: 'rgba(100,116,139,0.15)' },
+      { label: 'Kubernetes', color: '#64748B', bg: 'rgba(100,116,139,0.15)' },
+      { label: 'Cost optimization', color: '#64748B', bg: 'rgba(100,116,139,0.15)' }
+    ],
+    starters: ['Write Terraform for an AWS VPC with public/private subnets', 'Design a highly available architecture on Azure', 'Create Kubernetes manifests for a web service', 'Review this setup for cost savings']
+  },
+  {
+    id: 'monitoring',
+    name: 'Cognitive Monitoring',
+    icon: '📡',
+    color: '#F43F5E',
+    colorLight: 'rgba(244,63,94,0.15)',
+    tagline: 'Observability, alerting & incident response',
+    caps: [
+      { label: 'Dashboards', color: '#F43F5E', bg: 'rgba(244,63,94,0.15)' },
+      { label: 'Alert rules', color: '#F43F5E', bg: 'rgba(244,63,94,0.15)' },
+      { label: 'SLOs', color: '#F43F5E', bg: 'rgba(244,63,94,0.15)' },
+      { label: 'Incident postmortems', color: '#F43F5E', bg: 'rgba(244,63,94,0.15)' }
+    ],
+    starters: ['Define SLOs and alerts for a checkout API', 'Write Datadog monitors for a Node service', 'Analyze these error logs and find the root cause', 'Draft a postmortem for last night\'s outage']
+  }
+];
+
+/* ================= constants ================= */
+const byId = Object.fromEntries(AGENTS.map(a => [a.id, a]));
+const ENG = ['engineer', 'qa', 'testing', 'devops', 'deploy', 'infra', 'monitoring'];
+const MARK_SVG = '<svg viewBox="0 0 24 24" fill="none"><path d="M16.5 8.2a5.6 5.6 0 1 0 0 7.6" stroke="white" stroke-width="2.6" stroke-linecap="round"/><circle cx="17.4" cy="12" r="1.5" fill="white"/></svg>';
+const SEND_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+const STOP_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>';
+const GH_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>';
+const GL_ICON = '<svg viewBox="0 0 24 24"><path fill="#E24329" d="m12 22 4-12.3H8z"/><path fill="#FC6D26" d="M12 22 8 9.7H2.4z"/><path fill="#FCA326" d="M2.4 9.7 1.2 13.4a.8.8 0 0 0 .3.9L12 22z"/><path fill="#E24329" d="M2.4 9.7h5.6L5.6 2.3a.4.4 0 0 0-.8 0z"/><path fill="#FC6D26" d="M12 22l4-12.3h5.6z"/><path fill="#FCA326" d="m21.6 9.7 1.2 3.7a.8.8 0 0 1-.3.9L12 22z"/><path fill="#E24329" d="M21.6 9.7H16l2.4-7.4a.4.4 0 0 1 .8 0z"/></svg>';
+const MODES = {
+  autopilot: { get label() { return agentName(); }, ph: 'Give Daniel an engineering goal — features, bug fixes, migrations, whole backlogs…', hint: 'Plans the work · completes every task with tests verified · retries and escalates instead of getting stuck · one PR at the end' },
+  swarm: { label: 'Swarm', ph: 'Describe a goal — specialists plan, build, test, and ship it in parallel…', hint: 'Orchestrator picks agents · independent steps run in parallel' },
+  ask: { label: 'Ask', ph: 'Ask a specialist anything…', hint: 'Streams answers · grounded in your repo when connected' }
+};
+const SUGGEST = {
+  autopilot: ['Fix the failing tests on main', 'Add input validation to the signup API with tests', 'Upgrade a dependency and fix breaking changes', 'Add structured logging to the request handler'],
+  swarm: ['Add rate limiting to our public API, with tests, a CI check, and a safe rollout plan', 'Stand up a Node service on AWS: Terraform, Dockerfile, CI pipeline, and SLO alerts', 'Plan and ship password reset: requirements, code, tests, and a runbook'],
+  ask: null
+};
+const BUILTIN_PLAYBOOKS = [
+  { id: 'pb-bugfix', name: 'Fix a bug with a regression test', instructions: '1. Reproduce the bug with a failing test before changing code.\n2. Find the root cause; do not patch symptoms.\n3. Make the smallest fix.\n4. Keep the new test and run the full suite.\nSuccess: the new test fails before the fix and passes after; no other tests break.' },
+  { id: 'pb-feature', name: 'Build a feature behind tests', instructions: '1. Read the existing patterns for similar features and follow them.\n2. Write tests for the happy path, edge cases and errors.\n3. Implement until tests pass.\n4. Update docs/README where users would look.\nSuccess: tests cover the new behaviour; lint and type checks pass.' },
+  { id: 'pb-deps', name: 'Upgrade a dependency safely', instructions: '1. Read the changelog/migration notes between versions.\n2. Upgrade and update the lockfile.\n3. Fix breaking changes across the codebase.\n4. Run the full test suite and build.\nSuccess: build and all tests pass; list notable behaviour changes in the summary.' },
+  { id: 'pb-ci', name: 'Add a CI pipeline', instructions: '1. Detect the language, package manager and test command.\n2. Add a CI workflow (GitHub Actions or .gitlab-ci.yml) that installs, lints, tests and builds with caching.\n3. Validate the YAML and run the same commands locally in the sandbox.\nSuccess: the commands the pipeline runs all pass locally.' }
+];
+const SPEEDS = { fast: ['Fast', 'Routes exploration to a fast model, switches to the main model to write code'], normal: ['Normal', 'Main model for every step'], max: ['Max', 'Most capable model for every step'] };
+const PLANS = [
+  { id: 'starter', name: 'Starter', price: 20, for: 'For individual developers getting started with an AI engineer.', feats: ['All 16 specialist agents', 'Swarm Mode pipelines', 'Daniel missions — standard quota', 'Connect GitHub or GitLab repos', 'Slack & Teams notifications'] },
+  { id: 'pro', name: 'Pro', price: 100, pop: true, for: 'For engineers who ship with Daniel every day.', feats: ['Everything in Starter', 'Higher Daniel quota', 'Parallel Swarm stages', 'Slack & Teams bots', 'Jira & Linear ticket import', 'Priority support'] },
+  { id: 'team', name: 'Team', price: 500, for: 'For teams running Cognitive across their repos.', feats: ['Everything in Pro', 'Shared workspace for your team', 'Highest Daniel quota', 'Self-hosted GitLab support', 'Webhooks for Zapier, Make & n8n', 'Onboarding session'] }
+];
+const CONNS = [
+  ['🔑', 'Anthropic', 'anthropic', 'Powers every agent.', '<code>ANTHROPIC_API_KEY</code>'],
+  ['🔒', 'Access code', 'accessCode', 'Protects your API credit. Required before Daniel runs code.', '<code>PORTAL_ACCESS_CODE</code>'],
+  ['🧪', 'Sandbox', 'sandbox', 'Isolated micro-VMs where Daniel runs code and tests.', 'Automatic on Vercel'],
+  ['gh', 'GitHub', 'github', 'Private repos, pull requests, issue import and comments.', '<code>GITHUB_TOKEN</code>'],
+  ['gl', 'GitLab', 'gitlab', 'GitLab.com or self-hosted: repos, merge requests, issues.', '<code>GITLAB_TOKEN</code> · <code>GITLAB_URL</code>'],
+  ['💬', 'Slack notifications', 'slackNotify', 'Posts when a PR opens or a swarm finishes.', '<code>SLACK_BOT_TOKEN</code> + <code>SLACK_CHANNEL</code>'],
+  ['🤖', 'Slack bot', 'slackBot', 'Mention @Cognitive or use /cognitive in any channel.', '<code>SLACK_SIGNING_SECRET</code>'],
+  ['🟪', 'Teams notifications', 'teamsNotify', 'Posts results to a Teams channel.', '<code>TEAMS_WEBHOOK_URL</code>'],
+  ['🟦', 'Teams bot', 'teamsBot', '@mention Cognitive in a Teams channel.', '<code>TEAMS_OUTGOING_SECRET</code>'],
+  ['🎫', 'Jira', 'jira', 'Import tickets; PR links are posted back.', '<code>JIRA_BASE_URL</code> · <code>JIRA_EMAIL</code> · <code>JIRA_API_TOKEN</code>'],
+  ['📐', 'Linear', 'linear', 'Import issues; PR links are posted back.', '<code>LINEAR_API_KEY</code>'],
+  ['🔗', 'Webhook', 'webhook', 'JSON events for Zapier, Make, n8n.', '<code>WEBHOOK_URL</code>'],
+  ['💳', 'Stripe billing', 'stripe', 'Online checkout for the Starter, Pro and Team plans.', '<code>STRIPE_SECRET_KEY</code> + price IDs']
+];
+
+/* ================= state ================= */
+const STORE_KEY = 'cognitive-v4';
+let state = { knowledge: '', playbooks: [], playbookId: '', speed: 'fast', wikis: {}, onboarded: false, profile: { name: '', use: '' }, theme: 'system', mode: 'autopilot', askAgent: 'engineer', repo: null, accessCode: '', sessions: [], currentId: null, view: 'home', settingsTab: 'general', sideClosed: false };
+function load() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) Object.assign(state, JSON.parse(raw));
+    else { const old = JSON.parse(localStorage.getItem('cognitive-portal-v2') || 'null'); if (old) { state.repo = old.repo || null; state.accessCode = old.accessCode || ''; } }
+  } catch (e) {}
+  if (!Array.isArray(state.sessions)) state.sessions = [];
+  if (!byId[state.askAgent]) state.askAgent = 'engineer';
+  if (!MODES[state.mode]) state.mode = 'autopilot';
+  if (!Array.isArray(state.playbooks)) state.playbooks = []; if (!SPEEDS[state.speed]) state.speed = 'fast'; if (!state.wikis) state.wikis = {};
+}
+function save() {
+  state.sessions = state.sessions.slice(0, 40);
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+  catch (e) { // quota: trim oldest sessions' heavy data and retry
+    state.sessions.slice(10).forEach(s => { if (s.messages) s.messages = s.messages.slice(-6); if (s.events) s.events = s.events.slice(-20); delete s.apiMessages; });
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e2) {}
+  }
+}
+load();
+let busy = false, controller = null, integ = {}, pendingTicket = null, apStop = false;
+
+/* ================= helpers ================= */
+const $ = id => document.getElementById(id);
+const esc = t => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const cur = () => state.sessions.find(s => s.id === state.currentId);
+const allPlaybooks = () => [...BUILTIN_PLAYBOOKS, ...state.playbooks];
+const playbookById = id => allPlaybooks().find(p => p.id === id);
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2800); }
+function download(name, text) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/markdown' })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
+function ago(t) { const s = (Date.now() - t) / 1000; if (s < 60) return 'now'; if (s < 3600) return Math.floor(s / 60) + 'm'; if (s < 86400) return Math.floor(s / 3600) + 'h'; return Math.floor(s / 86400) + 'd'; }
+function rafRender(fn) { let p = false, last; return v => { last = v; if (p) return; p = true; requestAnimationFrame(() => { p = false; fn(last); }); }; }
+function autosize(el, max = 260) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, max) + 'px'; }
+document.querySelectorAll('#obMark, #sideMark').forEach(m => m.innerHTML = MARK_SVG);
+
+/* ================= theme ================= */
+function applyTheme() { if (state.theme === 'system') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', state.theme); }
+applyTheme();
+function isDark() { return state.theme === 'dark' || (state.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches); }
+$('themeBtn').onclick = () => { state.theme = isDark() ? 'light' : 'dark'; applyTheme(); save(); };
+
+/* ================= markdown ================= */
+function inline(s) {
+  const codes = [];
+  s = s.replace(/`([^`\n]+)`/g, (_, c) => { codes.push(c); return '\u0000' + (codes.length - 1) + '\u0000'; });
+  s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>').replace(/(^|[^*\w])\*([^*\n]+)\*(?!\w)/g, '$1<em>$2</em>')
+       .replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  return s.replace(/\u0000(\d+)\u0000/g, (_, i) => '<code>' + codes[+i] + '</code>');
+}
+function mdBlocks(text) {
+  const lines = esc(text).split('\n'); let html = '', i = 0;
+  const isSep = l => /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$/.test(l);
+  const cells = l => l.trim().replace(/^\||\|$/g, '').split('|').map(c => inline(c.trim()));
+  const listRe = /^\s*([-*+]|\d+[.)])\s+/;
+  while (i < lines.length) {
+    const l = lines[i]; let m;
+    if (!l.trim()) { i++; continue; }
+    if ((m = l.match(/^(#{1,4})\s+(.*)$/))) { html += `<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`; i++; continue; }
+    if (/^\s*(---+|\*\*\*+|___+)\s*$/.test(l)) { html += '<hr>'; i++; continue; }
+    if (l.includes('|') && i + 1 < lines.length && isSep(lines[i + 1])) {
+      const head = cells(l); i += 2; let rows = '';
+      while (i < lines.length && lines[i].includes('|') && lines[i].trim()) rows += '<tr>' + cells(lines[i++]).map(c => `<td>${c}</td>`).join('') + '</tr>';
+      html += `<table><thead><tr>${head.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`; continue;
+    }
+    if (/^&gt;\s?/.test(l)) { const q = []; while (i < lines.length && /^&gt;\s?/.test(lines[i])) q.push(lines[i++].replace(/^&gt;\s?/, '')); html += `<blockquote>${inline(q.join('<br>'))}</blockquote>`; continue; }
+    if (listRe.test(l)) {
+      const ordered = /^\s*\d+[.)]/.test(l); let items = '';
+      while (i < lines.length && listRe.test(lines[i])) {
+        let item = lines[i].replace(listRe, ''); i++;
+        while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !listRe.test(lines[i])) item += ' ' + lines[i++].trim();
+        items += `<li>${inline(item)}</li>`;
+      }
+      html += ordered ? `<ol>${items}</ol>` : `<ul>${items}</ul>`; continue;
+    }
+    const p = [l]; i++;
+    while (i < lines.length && lines[i].trim() && !/^(#{1,4}\s|&gt;)/.test(lines[i]) && !listRe.test(lines[i]) && !(lines[i].includes('|') && i + 1 < lines.length && isSep(lines[i + 1]))) p.push(lines[i++]);
+    html += `<p>${inline(p.join('<br>'))}</p>`;
+  }
+  return html;
+}
+function md(text) {
+  return String(text ?? '').split(/```/).map((part, idx) => {
+    if (idx % 2 === 0) return mdBlocks(part);
+    const nl = part.indexOf('\n'); const lang = nl >= 0 ? part.slice(0, nl).trim() : ''; const code = nl >= 0 ? part.slice(nl + 1).replace(/\n$/, '') : part;
+    return `<div class="code"><div class="code-head"><span>${esc(lang || 'code')}</span><button class="copy-btn" data-copy>Copy</button></div><pre><code>${esc(code)}</code></pre></div>`;
+  }).join('');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy]'); if (!b) return;
+  navigator.clipboard?.writeText(b.closest('.code').querySelector('code').textContent).then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1400); }).catch(() => toast('Copy failed'));
+});
+
+/* ================= API ================= */
+async function api(path, body, signal, retried) {
+  const res = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json', 'x-access-code': state.accessCode || '' }, body: JSON.stringify(body), signal });
+  if (res.status === 401 && !retried) {
+    const d = await res.clone().json().catch(() => ({}));
+    if (d.needCode) { const code = prompt('This workspace is protected. Enter the access code:'); if (code) { state.accessCode = code.trim(); save(); return api(path, body, signal, true); } }
+  }
+  if (!res.ok) { const d = await res.json().catch(() => ({})); const e = new Error(d.error || `Request failed (${res.status}).`); e.data = d; throw e; }
+  return res;
+}
+async function streamAgent(agentId, messages, { context, onText, signal, extra = {} }) {
+  const res = await api('/api/chat', { agentId, messages, repo: state.repo, context, knowledge: state.knowledge, ...extra }, signal);
+  const reader = res.body.getReader(); const dec = new TextDecoder(); let full = '';
+  while (true) { const { done, value } = await reader.read(); if (done) break; full += dec.decode(value, { stream: true }); onText(full); }
+  return full;
+}
+async function loadIntegrations() {
+  try { const r = await fetch('/api/integrations', { headers: { 'x-access-code': state.accessCode || '' } }); integ = await r.json(); if (r.status === 401) integ = { needCode: true }; } catch (e) { integ = {}; }
+}
+
+/* ================= onboarding ================= */
+const USES = [
+  ['🛠️', 'Ship features', 'Build and change product code', 'autopilot'],
+  ['🐞', 'Fix bugs', 'Diagnose failures and land fixes with tests', 'autopilot'],
+  ['🚀', 'DevOps & infrastructure', 'CI/CD, cloud, deployments, monitoring', 'swarm'],
+  ['📋', 'Plan & deliver', 'Requirements, status, risk, stakeholder updates', 'ask'],
+  ['✨', 'Something else', 'Explore all 16 agents', 'ask']
+];
+let obStep = 0, obUse = '';
+const obFlow = () => ['welcome', 'name', 'use', ...(integ.needCode && !state.accessCode ? ['code'] : []), ...(runtime === 'local' && !localInfo?.configured?.ANTHROPIC_API_KEY ? ['key'] : []), 'connect'];
+function renderOnboard() {
+  const flow = obFlow(); const name = flow[Math.min(obStep, flow.length - 1)];
+  $('obSteps').innerHTML = flow.map((_, i) => `<span class="${i <= obStep ? 'on' : ''}"></span>`).join('');
+  const c = $('obCard');
+  if (name === 'welcome') {
+    c.innerHTML = `<span class="mark lg">${MARK_SVG}</span><h1>Meet Cognitive — your<br>autonomous engineering team</h1>
+      <p class="sub">Daniel, your autonomous engineer, plans the work, codes, tests and ships. It keeps going — retrying and escalating instead of getting stuck — until every task passes your tests, then opens one pull request for your review.</p>
+      <div class="feat-row"><div class="feat">🤖<b>Daniel</b><small>Completes whole engineering goals and proves them with your tests.</small></div><div class="feat">🧩<b>Swarm</b><small>Specialists work in parallel on one goal.</small></div><div class="feat">🎯<b>16 agents</b><small>Engineering, DevOps, QA, PM, legal and more.</small></div></div>
+      <button class="btn btn-dark btn-lg" id="obNext">Get started</button>`;
+  } else if (name === 'name') {
+    c.innerHTML = `<span class="mark lg">${MARK_SVG}</span><h1>What should we call you?</h1><p class="sub">This stays in your browser.</p>
+      <input class="field" id="obName" placeholder="Your name" value="${esc(state.profile.name)}" autocomplete="given-name">
+      <div class="ob-foot"><button class="btn btn-dark btn-lg" id="obNext">Continue</button><button class="link-btn" id="obBack">Back</button></div>`;
+    setTimeout(() => $('obName')?.focus(), 30);
+    $('obName').onkeydown = e => { if (e.key === 'Enter') $('obNext').click(); };
+  } else if (name === 'use') {
+    c.innerHTML = `<span class="mark lg">${MARK_SVG}</span><h1>What will you use Cognitive for?</h1><p class="sub">We'll set up your workspace around it. You can use everything either way.</p>
+      <div id="obUses">${USES.map(([ic, t, d], i) => `<button class="choice ${obUse === t ? 'sel' : ''}" data-use="${i}"><span class="ci">${ic}</span><span><b>${t}</b><small>${d}</small></span></button>`).join('')}</div>
+      <div class="ob-foot"><button class="btn btn-dark btn-lg" id="obNext" ${obUse ? '' : 'disabled'}>Continue</button><button class="link-btn" id="obBack">Back</button></div>`;
+    c.querySelectorAll('[data-use]').forEach(b => b.onclick = () => { obUse = USES[+b.dataset.use][1]; state.mode = USES[+b.dataset.use][3]; renderOnboard(); });
+  } else if (name === 'key') {
+    c.innerHTML = `<span class="mark lg">${MARK_SVG}</span><h1>Connect your AI key</h1><p class="sub">Daniel runs on this computer and uses your Anthropic API key. It is stored only here, in your Daniel data folder.</p>
+      <input class="field" id="obKey" type="password" placeholder="sk-ant-…" autocomplete="off">
+      <div class="ob-foot"><button class="btn btn-dark btn-lg" id="obKeyGo">Continue</button><button class="link-btn" id="obBack">Back</button><span id="obKeyMsg" style="font-size:13px;color:var(--bad)"></span></div>`;
+    setTimeout(() => $('obKey')?.focus(), 30);
+    $('obKey').onkeydown = e => { if (e.key === 'Enter') $('obKeyGo').click(); };
+    $('obKeyGo').onclick = async () => {
+      const k = $('obKey').value.trim(); if (!/^sk-/.test(k)) { $('obKeyMsg').textContent = 'That does not look like an Anthropic key.'; return; }
+      await fetch('/api/local/config', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ANTHROPIC_API_KEY: k }) });
+      await detectRuntime(); await loadIntegrations(); obStep++; renderOnboard();
+    };
+  } else if (name === 'code') {
+    c.innerHTML = `<span class="mark lg">${MARK_SVG}</span><h1>Enter your access code</h1><p class="sub">This workspace is private. Ask your admin for the code.</p>
+      <input class="field" id="obCode" type="password" placeholder="Access code" autocomplete="off">
+      <div class="ob-foot"><button class="btn btn-dark btn-lg" id="obCodeGo">Continue</button><button class="link-btn" id="obBack">Back</button><span id="obCodeMsg" style="font-size:13px;color:var(--bad)"></span></div>`;
+    setTimeout(() => $('obCode')?.focus(), 30);
+    $('obCode').onkeydown = e => { if (e.key === 'Enter') $('obCodeGo').click(); };
+    $('obCodeGo').onclick = async () => {
+      const code = $('obCode').value.trim(); if (!code) return;
+      const r = await fetch('/api/integrations', { headers: { 'x-access-code': code } });
+      if (r.status === 401) { $('obCodeMsg').textContent = 'That code did not work.'; return; }
+      state.accessCode = code; integ = await r.json(); obStep++; save(); renderOnboard();
+    };
+  } else {
+    c.innerHTML = `<span class="mark lg">${MARK_SVG}</span><h1>Connect your code</h1><p class="sub">Point Cognitive at a repository so every agent works against your real codebase.</p>
+      <button class="provider dark" id="obGh"><span style="width:18px;height:18px;display:inline-flex">${GH_ICON}</span>Connect a GitHub repo</button>
+      <button class="provider" id="obGl"><span style="width:18px;height:18px;display:inline-flex">${GL_ICON}</span>Connect a GitLab project</button>
+      ${runtime === 'local' ? '<button class="provider" id="obLocal">📁 Use a folder on this computer</button>' : ''}
+      <div id="obRepoRow" style="display:none;margin-top:6px"><input class="field" id="obRepo" placeholder="owner/repo or full URL" autocomplete="off" spellcheck="false"><div class="ob-foot" style="margin-top:10px"><button class="btn btn-dark" id="obRepoGo">Load repository</button><span id="obRepoMsg" style="font-size:13px;color:var(--text2)"></span></div></div>
+      <div class="ob-foot" style="justify-content:center;margin-top:18px"><button class="link-btn" id="obSkip">Skip for now</button></div>`;
+    const showRow = (ph) => { $('obRepoRow').style.display = ''; $('obRepo').placeholder = ph; $('obRepo').focus(); };
+    $('obGh').onclick = () => showRow('owner/repo or https://github.com/owner/repo');
+    $('obGl').onclick = () => showRow('https://gitlab.com/group/project');
+    $('obRepo').onkeydown = e => { if (e.key === 'Enter') $('obRepoGo').click(); };
+    $('obRepoGo').onclick = async () => {
+      const b = $('obRepoGo'); b.disabled = true; b.textContent = 'Loading…'; $('obRepoMsg').textContent = '';
+      try { await connectRepo($('obRepo').value); finishOnboard(); }
+      catch (e) { $('obRepoMsg').textContent = e.message; b.disabled = false; b.textContent = 'Load repository'; }
+    };
+    $('obSkip').onclick = finishOnboard;
+    if ($('obLocal')) $('obLocal').onclick = async () => { const p = window.danielDesktop?.pickFolder ? await window.danielDesktop.pickFolder() : prompt('Full path to a git repository:'); if (!p) return; try { await connectLocalFolder(p); finishOnboard(); } catch (e) { toast(e.message); } };
+  }
+  if ($('obNext')) $('obNext').onclick = () => { if (name === 'name') state.profile.name = $('obName').value.trim(); if (name === 'use') state.profile.use = obUse; obStep++; save(); renderOnboard(); };
+  if ($('obBack')) $('obBack').onclick = () => { obStep--; renderOnboard(); };
+}
+function finishOnboard() { state.onboarded = true; save(); $('onboard').classList.remove('open'); renderAll(); }
+
+/* ================= repo ================= */
+async function connectRepo(url) {
+  url = String(url || '').trim(); if (!url) throw new Error('Enter a repository.');
+  const res = await api('/api/repo', { url });
+  state.repo = await res.json(); save(); renderAll(); toast(`Connected ${state.repo.name} · ${state.repo.files.length} key files`);
+}
+function repoChip() {
+  const r = state.repo;
+  const ic = r ? (r.provider === 'gitlab' ? GL_ICON : r.provider === 'local' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>' : GH_ICON) : GH_ICON;
+  return `<button class="chip ${r ? 'on' : ''}" data-act="repo" title="${r ? esc((r.path || r.name) + ' · ' + r.branch) : 'Connect a repository'}">${ic}<span>${r ? esc(r.name) : runtime === 'local' ? 'Choose repo or folder' : 'Connect repo'}</span></button>`;
+}
+function askRepo() {
+  if (runtime === 'local' && window.danielDesktop?.pickFolder && confirm('Use a folder on this computer? (Cancel to enter a GitHub or GitLab repo instead.)')) return pickLocalFolder();
+  const v = prompt(runtime === 'local' ? 'Folder path on this computer, or a GitHub/GitLab repo. Leave empty to disconnect:' : 'Repository (GitHub owner/repo, GitHub URL, or GitLab URL). Leave empty to disconnect:', state.repo?.provider === 'local' ? state.repo.path : state.repo?.name || '');
+  if (v === null) return;
+  if (runtime === 'local' && /^(\/|~|[A-Za-z]:[\\/]|\.)/.test(v.trim())) { connectLocalFolder(v.trim()).catch(e => toast(e.message)); return; }
+  if (!v.trim()) { state.repo = null; save(); renderAll(); toast('Repository disconnected'); return; }
+  connectRepo(v).catch(e => toast(e.message));
+}
+
+/* ================= shell render ================= */
+const TYPE_ICON = { autopilot: '⚡', mission: '◆', swarm: '🧩', chat: '💬' };
+function renderSide() {
+  $('wsName').textContent = state.repo ? state.repo.name : 'Cognitive AI';
+  $('whoName').textContent = state.profile.name || 'Guest';
+  $('avatar').textContent = (state.profile.name || 'C').slice(0, 1).toUpperCase();
+  $('whoPlan').textContent = state.plan ? `${state.plan} plan` : 'Free preview';
+  document.querySelectorAll('.side .nav-item[data-nav]').forEach(b => b.classList.toggle('on', state.view === b.dataset.nav));
+  const list = state.sessions;
+  $('sessions').innerHTML = list.length ? list.map(s => `<button class="sess ${s.id === state.currentId && state.view === 'session' ? 'on' : ''}" data-sess="${s.id}" title="${esc(s.title)}"><span class="ty">${s.type === 'chat' ? byId[s.agentId]?.icon || '💬' : TYPE_ICON[s.type]}</span><span class="t">${esc(s.title)}</span>${(s.type === 'autopilot' && s.running) || (s.type === 'mission' && ['setup', 'planning', 'working', 'finalizing'].includes(s.mission?.phase)) ? '<span class="dot live"></span>' : `<span style="font-size:11px;color:var(--text3)">${ago(s.updatedAt || s.createdAt)}</span>`}</button>`).join('') : '<div class="empty-s">No sessions yet</div>';
+  document.body.classList.toggle('side-closed', !!state.sideClosed);
+  $('side').style.display = state.sideClosed && innerWidth > 860 ? 'none' : '';
+  $('openSideBtn').style.display = state.sideClosed && innerWidth > 860 ? '' : 'none';
+}
+function setTop(crumb, actions = '') { $('crumb').innerHTML = crumb; $('topActions').innerHTML = actions; $('topbar').classList.toggle('bare', state.view === 'home'); }
+function go(view, extra = {}) {
+  if (busy && view !== state.view && !(view === 'session' && extra.id === state.currentId)) { /* allow navigation; running work continues */ }
+  Object.assign(state, { view }, extra); save(); document.body.classList.remove('nav-open'); renderAll();
+}
+function renderAll() {
+  renderSide();
+  $('dock').innerHTML = '';
+  if (state.view === 'home') renderHome();
+  else if (state.view === 'session' && cur()) renderSession();
+  else if (state.view === 'agents') renderAgents();
+  else if (state.view === 'analytics') renderAnalytics();
+  else if (state.view === 'benchmark') renderBenchmark();
+  else if (state.view === 'wiki') renderWiki();
+  else if (state.view === 'review') renderReview();
+  else if (state.view === 'customize') renderCustomize();
+  else if (state.view === 'connections') { state.settingsTab = 'connections'; renderSettings(); }
+  else if (state.view === 'plans') { state.settingsTab = 'plans'; renderSettings(); }
+  else if (state.view === 'settings') renderSettings();
+  else { state.view = 'home'; renderHome(); }
+}
+
+/* ================= home ================= */
+function composerHTML(id, { placeholder, big }) {
+  const m = state.mode;
+  return `<div class="composer" id="${id}">
+    <textarea id="${id}In" rows="${big ? 2 : 1}" placeholder="${esc(placeholder)}"></textarea>
+    <div class="comp-bar">
+      ${repoChip()}
+      ${m === 'ask' ? `<select class="chip" id="${id}Agent" aria-label="Agent">${[['Engineering', AGENTS.filter(a => ENG.includes(a.id))], ['Business', AGENTS.filter(a => !ENG.includes(a.id))]].map(([g, l]) => `<optgroup label="${g}">${l.map(a => `<option value="${a.id}" ${a.id === state.askAgent ? 'selected' : ''}>${a.icon} ${a.name.replace('Cognitive ', '')}</option>`).join('')}</optgroup>`).join('')}</select>` : ''}
+      ${m !== 'ask' ? `<select class="chip" id="${id}Pb" aria-label="Playbook" title="Playbook"><option value="">No playbook</option>${allPlaybooks().map(p => `<option value="${p.id}" ${p.id === state.playbookId ? 'selected' : ''}>▤ ${esc(p.name)}</option>`).join('')}</select>` : ''}
+      ${m === 'autopilot' ? `<button class="chip" data-act="ticket" title="Import a Jira, Linear, GitHub or GitLab ticket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9a2 2 0 0 0 0 6v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-3a2 2 0 0 0 0-6V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1z"/></svg><span>${pendingTicket ? esc(pendingTicket.id) : 'Ticket'}</span></button>` : ''}
+      ${m === 'autopilot' ? `<select class="chip" id="${id}Speed" aria-label="Speed" title="${esc(SPEEDS[state.speed][1])}" style="margin-left:auto">${Object.entries(SPEEDS).map(([k, v]) => `<option value="${k}" ${k === state.speed ? 'selected' : ''}>${v[0]}</option>`).join('')}</select>` : ''}
+      <button class="send" id="${id}Send" aria-label="Send" ${m === 'autopilot' ? 'style="margin-left:6px"' : ''}>${SEND_ICON}</button>
+    </div></div>`;
+}
+function wireComposer(id, onSend) {
+  const ta = $(id + 'In'), send = $(id + 'Send');
+  const upd = () => { send.disabled = !busy && !ta.value.trim(); };
+  ta.addEventListener('input', () => { autosize(ta); upd(); });
+  ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!busy && ta.value.trim()) onSend(ta.value.trim()); } });
+  send.onclick = () => { if (busy) { controller?.abort(); apStop = true; toast('Stopping…'); return; } if (ta.value.trim()) onSend(ta.value.trim()); };
+  if ($(id + 'Agent')) $(id + 'Agent').onchange = e => { state.askAgent = e.target.value; save(); };
+  if ($(id + 'Pb')) $(id + 'Pb').onchange = e => { state.playbookId = e.target.value; save(); };
+  if ($(id + 'Speed')) $(id + 'Speed').onchange = e => { state.speed = e.target.value; e.target.title = SPEEDS[state.speed][1]; save(); };
+  $(id).querySelectorAll('[data-act="repo"]').forEach(b => b.onclick = askRepo);
+  $(id).querySelectorAll('[data-act="ticket"]').forEach(b => b.onclick = importTicket);
+  if (busy) { send.innerHTML = STOP_ICON; send.classList.add('stop'); send.disabled = false; } else upd();
+  return ta;
+}
+async function importTicket() {
+  const ref = prompt('Ticket: Jira key (ABC-123), Linear URL, or GitHub / GitLab issue URL', '');
+  if (!ref) return;
+  try {
+    pendingTicket = await (await api('/api/integrations?action=ticket', { ref })).json();
+    renderAll(); const ta = $('homeIn'); if (ta && !ta.value.trim()) { ta.value = `${pendingTicket.title}\n\n${pendingTicket.body}`.trim(); autosize(ta); ta.dispatchEvent(new Event('input')); }
+    toast(`Imported ${pendingTicket.id}`);
+  } catch (e) { toast(e.message); }
+}
+function renderHome() {
+  const m = state.mode, name = state.profile.name;
+  setTop('', `<button class="btn hide-sm" data-nav-go="plans">Upgrade</button>`);
+  $('view').innerHTML = `<div class="home"><div class="home-inner">
+    <div class="home-head"><span class="mark">${MARK_SVG}</span><span class="wordmark">${name ? `Hi ${esc(name)}, what are we building?` : 'Cognitive'}</span>
+      <div class="seg" role="tablist">${Object.entries(MODES).map(([k, v]) => `<button role="tab" data-mode="${k}" class="${k === m ? 'on' : ''}" aria-selected="${k === m}">${v.label}</button>`).join('')}</div></div>
+    ${composerHTML('home', { placeholder: MODES[m].ph.replace('Daniel', agentName()), big: true })}
+    ${pendingTicket && m === 'autopilot' ? `<div class="ticket-mini">🎫 <b>${esc(pendingTicket.id)}</b> ${esc(pendingTicket.title)} <button class="link-btn" style="margin-left:auto" id="clrTicket">Remove</button></div>` : ''}
+    <div class="hint"><span>${MODES[m].hint}</span>${m === 'autopilot' && !state.repo ? '<span style="color:var(--warn)">Connect a repo to start</span>' : ''}</div>
+    <div class="suggest">${(SUGGEST[m] || byId[state.askAgent].starters).map((s, i) => `<button class="sug" data-sug="${i}">${esc(s)}</button>`).join('')}</div>
+  </div></div>`;
+  document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { state.mode = b.dataset.mode; save(); renderHome(); $('homeIn')?.focus(); });
+  const ta = wireComposer('home', text => startFromHome(text));
+  if ($('homeAgent')) $('homeAgent').onchange = e => { state.askAgent = e.target.value; save(); renderHome(); };
+  document.querySelectorAll('[data-sug]').forEach(b => b.onclick = () => { ta.value = b.textContent; autosize(ta); ta.dispatchEvent(new Event('input')); ta.focus(); });
+  if ($('clrTicket')) $('clrTicket').onclick = () => { pendingTicket = null; renderHome(); };
+  setTimeout(() => { if (document.body.contains(ta)) ta.focus(); }, 20);
+}
+function newSession(s) { s.id = uid(); s.createdAt = s.updatedAt = Date.now(); state.sessions.unshift(s); state.currentId = s.id; state.view = 'session'; save(); return s; }
+function startFromHome(text) {
+  if (busy) return;
+  const m = state.mode;
+  if (m === 'autopilot') { startMissionFromHome(text); return; }
+  else if (m === 'swarm') {
+    const s = newSession({ type: 'swarm', title: text.split('\n')[0].slice(0, 70), task: text, steps: [], status: 'planning', playbook: playbookById(state.playbookId) || null });
+    renderAll(); runSwarm(s);
+  } else {
+    const s = newSession({ type: 'chat', agentId: state.askAgent, title: text.split('\n')[0].slice(0, 70), messages: [] });
+    renderAll(); sendChat(s, text);
+  }
+}
+
+/* ================= sessions ================= */
+function renderSession() {
+  const s = cur();
+  if (s.type === 'chat') return renderChat(s);
+  if (s.type === 'swarm') return renderSwarm(s);
+  if (s.type === 'mission') return renderMission(s);
+  return renderAutopilot(s);
+}
+function sessionActions(s, extra = '') {
+  return `${extra}<button class="icon-btn" data-sact="export" title="Export as Markdown" aria-label="Export"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></button><button class="icon-btn" data-sact="delete" title="Delete session" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button>`;
+}
+function wireSessionActions(s) {
+  document.querySelectorAll('[data-sact]').forEach(b => b.onclick = () => {
+    if (b.dataset.sact === 'export') download(`${s.type}-${s.id}.md`, exportSession(s));
+    if (b.dataset.sact === 'delete') {
+      if ((busy && s.running) || (s.type === 'mission' && loops.has(s.id) && !s.local)) return toast('Pause or stop it first.');
+      if (!confirm('Delete this session?')) return;
+      if (s.type === 'autopilot' && s.taskId && !s.closed) api('/api/task?action=stop', { taskId: s.taskId }).catch(() => {});
+      if (s.type === 'mission') { s.pauseRequested = true; if (s.local && s.localId) api('/api/mission?action=delete', { id: s.localId }).catch(() => {}); else if (s.mission?.taskId) api('/api/task?action=stop', { taskId: s.mission.taskId }).catch(() => {}); }
+      state.sessions = state.sessions.filter(x => x.id !== s.id); go('home');
+    }
+  });
+}
+function exportSession(s) {
+  if (s.type === 'chat') { const a = byId[s.agentId]; return `# ${a.name}\n\n` + s.messages.map(m => `**${m.role === 'user' ? 'You' : a.name}:**\n\n${m.content}`).join('\n\n---\n\n'); }
+  if (s.type === 'mission') return exportMission(s);
+  if (s.type === 'swarm') return `# Swarm report\n\n**Goal:** ${s.task}\n\n**Plan:** ${s.summary || ''}\n\n` + s.steps.map((p, i) => `---\n\n## Step ${i + 1} (stage ${p.stage}): ${byId[p.agent].name}\n\n_${p.instruction}_\n\n${p.output || '_Not run._'}`).join('\n\n');
+  return `# Autopilot session\n\n**Repo:** ${s.repo.name} (${s.repo.branch})\n\n**Task:** ${s.task}\n\n` + (s.summary ? `## Summary\n\n${s.summary}\n\n` : '') + (s.pr ? `**PR:** ${s.pr.url}\n\n` : '') + '## Timeline\n\n' + s.events.map(e => e.type === 'tool' ? `- \`${evLabel(e)}\` → ${e.ok ? 'ok' : 'error'}` : e.type === 'verify' ? `- Verification \`${e.command}\`: ${e.ok ? 'passed' : 'failed'}` : e.type === 'text' ? `> ${e.text.replace(/\n/g, ' ')}` : `- ${e.text || e.summary || ''}`).join('\n');
+}
+
+/* ---------- chat ---------- */
+function renderChat(s) {
+  const a = byId[s.agentId];
+  setTop(`<span>${a.icon} ${esc(a.name)}</span><small>${esc(a.tagline)}</small>`, sessionActions(s));
+  $('view').innerHTML = `<div class="content" id="chatBox">${s.messages.map(msgHTML(a)).join('')}</div>`;
+  $('dock').innerHTML = `<div class="dock">${composerHTML('chat', { placeholder: `Reply to ${a.name}…` })}</div>`;
+  wireComposer('chat', text => sendChat(s, text));
+  wireSessionActions(s);
+  $('view').scrollTop = $('view').scrollHeight;
+}
+const msgHTML = a => (m, i) => m.role === 'user'
+  ? `<div class="msg user"><div class="av">🙂</div><div class="body"><div class="who-l">You</div><div class="bubble">${esc(m.content)}</div></div></div>`
+  : `<div class="msg"><div class="av" style="background:${a.colorLight}">${a.icon}</div><div class="body"><div class="who-l">${esc(a.name)}</div><div class="bubble md">${md(m.content)}</div></div></div>`;
+async function sendChat(s, text) {
+  if (busy) return;
+  const a = byId[s.agentId];
+  s.messages.push({ role: 'user', content: text }); s.updatedAt = Date.now(); save();
+  busy = true; controller = new AbortController(); s.running = true;
+  if (state.currentId === s.id) renderChat(s);
+  const box = $('chatBox');
+  box.insertAdjacentHTML('beforeend', `<div class="msg" id="live"><div class="av" style="background:${a.colorLight}">${a.icon}</div><div class="body"><div class="who-l">${esc(a.name)}</div><div class="bubble md" id="liveB"><span class="typing"><i></i><i></i><i></i></span></div></div></div>`);
+  const v = $('view'); v.scrollTop = v.scrollHeight;
+  const paint = rafRender(t => { const b = $('liveB'); if (!b) return; const stick = v.scrollHeight - v.scrollTop - v.clientHeight < 90; b.innerHTML = md(t); b.classList.add('cursor'); if (stick) v.scrollTop = v.scrollHeight; });
+  let reply = '';
+  try { reply = await streamAgent(a.id, s.messages.slice(-40), { onText: t => { reply = t; if (state.currentId === s.id) paint(t); }, signal: controller.signal }); }
+  catch (e) { reply = e.name === 'AbortError' ? (reply || '') + '\n\n_[Stopped.]_' : (reply ? reply + '\n\n' : '') + `⚠️ ${e.message}`; }
+  s.messages.push({ role: 'assistant', content: reply || '⚠️ No response.' });
+  if (s.messages.length > 60) s.messages.splice(0, s.messages.length - 60);
+  s.running = false; s.updatedAt = Date.now(); busy = false; controller = null; save();
+  if (state.view === 'session' && state.currentId === s.id) renderChat(s); else renderSide();
+}
+
+/* ---------- swarm ---------- */
+function renderSwarm(s) {
+  const stages = [...new Set(s.steps.map(p => p.stage))];
+  setTop(`<span>🧩 ${esc(s.title)}</span><small>Swarm</small>`, sessionActions(s, busy && s.running ? '<button class="btn btn-danger" id="swStop">Stop</button>' : ''));
+  const stepCard = (p, i) => { const a = byId[p.agent]; return `<div class="card step" id="step${i}"><div class="step-h"><div class="ag" style="background:${a.colorLight}">${a.icon}</div><div style="min-width:0"><div class="step-name">${esc(a.name)}</div><div class="step-ins">${esc(p.instruction)}</div></div>${statusPill(p.status)}</div><div class="step-b md" id="body${i}">${p.output ? md(p.output) : p.status === 'running' ? '<span class="typing"><i></i><i></i><i></i></span>' : ''}</div></div>`; };
+  const secs = s.finishedAt ? Math.round((s.finishedAt - s.createdAt) / 1000) : null;
+  $('view').innerHTML = `<div class="content">
+    <div class="card card-pad"><div class="label">Orchestrator${s.steps.length ? ` · ${s.steps.length} agents · ${stages.length} stage${stages.length > 1 ? 's' : ''}${stages.length < s.steps.length ? ' · parallel' : ''}` : ''}</div>
+      <div style="font-size:15px;font-weight:600;margin-top:6px">${s.status === 'planning' ? '<span class="typing"><i></i><i></i><i></i></span> Planning the pipeline…' : esc(s.summary || s.task)}</div>
+      ${s.error ? `<div class="notice warn" style="margin-top:10px">⚠️ ${esc(s.error)}</div>` : ''}
+      <div class="pipeline" id="pipeline">${pipeHTML(s)}</div></div>
+    ${stages.map(st => { const g = s.steps.map((p, i) => ({ p, i })).filter(x => x.p.stage === st); return `<div class="label stage-l">Stage ${st}${g.length > 1 ? ` · ${g.length} in parallel` : ''}</div><div class="${g.length > 1 ? 'stage-grid' : ''}">${g.map(x => stepCard(x.p, x.i)).join('')}</div>`; }).join('')}
+    ${s.status === 'done' || s.status === 'stopped' ? `<div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap"><span class="stat">${s.status === 'done' ? `✅ <b>Complete</b> in ${secs}s` : `Stopped after ${s.steps.filter(p => p.status === 'done').length} of ${s.steps.length} steps`}</span><button class="btn" id="swReport">Download report</button>${integ.slackNotify || integ.teamsNotify || integ.webhook ? '<button class="btn" id="swShare">Send to Slack / Teams</button>' : ''}</div>` : ''}
+  </div>`;
+  wireSessionActions(s);
+  if ($('swStop')) $('swStop').onclick = () => controller?.abort();
+  if ($('swReport')) $('swReport').onclick = () => download('swarm-report.md', exportSession(s));
+  if ($('swShare')) $('swShare').onclick = async () => { try { const r = await (await api('/api/integrations?action=notify', { title: `Swarm finished: ${s.summary || s.task}`.slice(0, 200), text: s.steps.map((p, i) => `${i + 1}. ${byId[p.agent].name} — ${p.status}`).join('\n') })).json(); toast(r.sent.length ? `Sent to ${r.sent.join(' & ')}` : 'Nothing configured to send to.'); } catch (e) { toast(e.message); } };
+}
+const statusPill = st => st === 'done' ? '<span class="pill ok">Done</span>' : st === 'running' ? '<span class="pill accent"><span class="dot live" style="width:6px;height:6px"></span>Working</span>' : st === 'failed' ? '<span class="pill bad">Failed</span>' : st === 'stopped' ? '<span class="pill warn">Stopped</span>' : '<span class="pill muted">Queued</span>';
+function pipeHTML(s) { const stages = [...new Set(s.steps.map(p => p.stage))]; return stages.map((st, k) => (k ? '<span class="parrow">→</span>' : '') + s.steps.filter(p => p.stage === st).map(p => `<span class="pstep ${p.status}">${byId[p.agent].icon} ${byId[p.agent].name.replace('Cognitive ', '')}</span>`).join('<span class="parrow">+</span>')).join(''); }
+async function runSwarm(s) {
+  busy = true; s.running = true; controller = new AbortController(); renderAll();
+  const live = () => state.view === 'session' && state.currentId === s.id;
+  try {
+    const plan = await (await api('/api/plan', { task: s.task + (s.playbook ? `\n\nPlaybook to follow: ${s.playbook.name}\n${s.playbook.instructions}` : ''), repoName: state.repo?.name, knowledge: state.knowledge }, controller.signal)).json();
+    s.summary = plan.summary; s.steps = plan.steps.map(p => ({ ...p, status: 'queued', output: '' })); s.status = 'running'; save();
+    if (live()) renderSwarm(s);
+    const stages = [...new Set(s.steps.map(p => p.stage))];
+    const runStep = async i => {
+      const p = s.steps[i]; p.status = 'running'; if (live()) { renderSwarm(s); }
+      const context = s.steps.filter(q => q.stage < p.stage && q.status === 'done').map(q => `### Step ${s.steps.indexOf(q) + 1} — ${byId[q.agent].name}\nTask: ${q.instruction}\n\n${q.output.slice(0, 15000)}`).join('\n\n---\n\n');
+      const paint = rafRender(t => { const b = $('body' + i); if (b && live()) { b.innerHTML = md(t); b.classList.add('cursor'); b.scrollTop = b.scrollHeight; } });
+      try {
+        p.output = await streamAgent(p.agent, [{ role: 'user', content: `Overall goal: ${s.task}\n\nYour step (${i + 1} of ${s.steps.length}): ${p.instruction}` }], { context: context || undefined, onText: t => { p.output = t; paint(t); }, signal: controller.signal });
+        p.status = 'done';
+      } catch (e) { p.status = e.name === 'AbortError' ? 'stopped' : 'failed'; if (e.name !== 'AbortError') p.output += `\n\n⚠️ ${e.message}`; }
+      save(); if (live()) { const b = $('body' + i); if (b) b.classList.remove('cursor'); $('pipeline').innerHTML = pipeHTML(s); }
+    };
+    for (const st of stages) {
+      const idx = s.steps.map((_, i) => i).filter(i => s.steps[i].stage === st);
+      idx.forEach(i => s.steps[i].status = 'running'); if (live()) renderSwarm(s);
+      await Promise.all(idx.map(runStep));
+      if (live()) renderSwarm(s);
+      if (idx.some(i => s.steps[i].status !== 'done')) break;
+    }
+    s.status = s.steps.every(p => p.status === 'done') ? 'done' : 'stopped';
+  } catch (e) { s.status = 'stopped'; s.error = e.name === 'AbortError' ? 'Stopped.' : e.message; }
+  s.finishedAt = Date.now(); s.updatedAt = Date.now(); s.running = false; busy = false; controller = null; save();
+  if (live()) renderSwarm(s); renderSide();
+}
+
+/* ---------- autopilot ---------- */
+const TOOL_ICON = { bash: '›_', read_file: '📄', write_file: '✎', edit_file: '✎', search: '⌕' };
+function evLabel(ev) {
+  const i = ev.input || {};
+  if (ev.name === 'bash') return '$ ' + (i.command || '');
+  if (ev.name === 'read_file') return 'read ' + i.path + (i.start_line ? `:${i.start_line}-${i.end_line || ''}` : '');
+  if (ev.name === 'write_file') return 'write ' + i.path;
+  if (ev.name === 'edit_file') return 'edit ' + i.path;
+  if (ev.name === 'search') return 'search /' + i.pattern + '/' + (i.path ? ' in ' + i.path : '');
+  return ev.name;
+}
+function evHTML(ev) {
+  if (ev.type === 'text') return `<div class="ev-text md">${md(ev.text)}</div>`;
+  if (ev.type === 'tool') return `<details class="ev"><summary><span class="ev-i">${TOOL_ICON[ev.name] || '•'}</span><span class="ev-l">${esc(evLabel(ev))}</span><span class="pill ${ev.ok ? 'ok' : 'bad'}">${ev.name === 'bash' ? 'exit ' + ev.exitCode : ev.ok ? 'ok' : 'error'}</span></summary><pre>${esc(ev.output || '')}</pre></details>`;
+  if (ev.type === 'verify') return `<details class="ev verify" ${ev.ok ? '' : 'open'}><summary><span class="ev-i">🛡</span><span class="ev-l">Verification · ${esc(ev.command)}</span><span class="pill ${ev.ok ? 'ok' : 'bad'}">${ev.ok ? 'passed' : 'failed — continuing'}</span></summary><pre>${esc(ev.output || '')}</pre></details>`;
+  if (ev.type === 'finish') return `<div class="finish"><h3>✓ Task complete${ev.testsVerified ? ' — tests verified' : ''}</h3><div class="md">${md(ev.summary)}</div><div style="margin-top:8px;font-size:12.5px;color:var(--text2)">${ev.testsVerified ? `Verified by re-running <code style="font-family:var(--mono)">${esc(ev.testCommand)}</code> in the sandbox.` : `No automated test: ${esc(ev.noTestsReason)}`}</div></div>`;
+  if (ev.type === 'error') return `<div class="notice warn">⚠️ ${esc(ev.text)}</div>`;
+  if (ev.type === 'info') return `<div class="info-line">${esc(ev.text)}</div>`;
+  return '';
+}
+function renderAutopilot(s) {
+  const secs = Math.round(((s.finishedAt || Date.now()) - s.createdAt) / 1000);
+  const status = s.running ? 'Working' : s.done ? 'Complete' : s.closed ? 'Ended' : s.stopped ? 'Stopped' : s.error ? 'Paused' : 'Idle';
+  const kind = s.repo.provider === 'gitlab' ? 'merge request' : 'pull request';
+  setTop(`<span>⚡ ${esc(s.title)}</span><small>${esc(agentName())} (single task)</small>`, sessionActions(s));
+  $('view').innerHTML = `<div class="content">
+    <div class="card run-head">
+      <span class="stat"><span class="dot ${s.running ? 'live' : s.done ? 'ok' : ''}"></span><b>${status}</b></span>
+      <span class="stat">Steps <b>${s.steps}</b></span><span class="stat">Time <b id="apTime">${Math.floor(secs / 60)}m ${secs % 60}s</b></span>
+      <span class="stat" title="${esc(SPEEDS[s.speed || 'normal'][1])}">${SPEEDS[s.speed || 'normal'][0]}${s.routes ? ` <span class="route">${Object.entries(s.routes).map(([k, n]) => `<span class="pill ${k === 'fast' ? 'muted' : 'accent'}">${k} ×${n}</span>`).join('')}</span>` : ''}</span>
+      <span class="stat">${s.repo.provider === 'gitlab' ? GL_ICON.replace('<svg', '<svg width="13" height="13"') : GH_ICON.replace('<svg', '<svg width="13" height="13"')} <b>${esc(s.repo.name)}</b></span>
+      <div class="run-actions">
+        ${s.running ? '<button class="btn btn-danger" id="apStopBtn">Stop</button>' : ''}
+        ${!s.running && !s.done && !s.closed && s.taskId ? '<button class="btn" id="apResume">Resume</button>' : ''}
+        ${!s.closed && s.taskId ? '<button class="btn" id="apDiffBtn">View diff</button>' : ''}
+        ${!s.running && !s.pr && !s.closed && s.taskId ? `<button class="btn btn-dark" id="apPrBtn">Open ${kind}</button>` : ''}
+      </div></div>
+    <div class="task-line"><b style="color:var(--text)">Task</b> · ${esc(s.task).slice(0, 500)}${s.ticket ? ` · 🎫 <a href="${esc(s.ticket.url)}" target="_blank" rel="noopener">${esc(s.ticket.id)}</a>` : ''}${s.playbook ? ` · ▤ ${esc(s.playbook.name)}` : ''}</div>
+    <div class="timeline">${s.events.map(evHTML).join('')}${s.running ? '<span class="typing" style="padding:4px 2px"><i></i><i></i><i></i></span>' : ''}</div>
+    <div id="apDiff"></div>
+    ${s.pr ? `<div class="pr">🚀 ${kind[0].toUpperCase() + kind.slice(1)} opened: <a href="${esc(s.pr.url)}" target="_blank" rel="noopener">${esc(s.pr.url)}</a><div style="font-size:12.5px;color:var(--text2);margin-top:6px">${s.pr.files} file(s) on <code style="font-family:var(--mono)">${esc(s.pr.branch)}</code>${s.pr.ticketCommented ? ' · link posted to the ticket' : ''}${s.pr.notified?.length ? ' · notified ' + s.pr.notified.join(' & ') : ''}</div></div>` : ''}
+  </div>`;
+  wireSessionActions(s);
+  if ($('apStopBtn')) $('apStopBtn').onclick = () => { apStop = true; toast('Stopping after the current step…'); };
+  if ($('apResume')) $('apResume').onclick = () => apLoop(s);
+  if ($('apDiffBtn')) $('apDiffBtn').onclick = () => showDiff(s);
+  if ($('apPrBtn')) $('apPrBtn').onclick = () => openPR(s);
+  if (s.running) { const v = $('view'); v.scrollTop = v.scrollHeight; }
+}
+const apLive = s => state.view === 'session' && state.currentId === s.id;
+function apSave(s) { s.updatedAt = Date.now(); save(); if (apLive(s)) renderAutopilot(s); renderSide(); }
+async function startAutopilot(s) {
+  busy = true; s.running = true; apStop = false;
+  s.events.push({ type: 'info', text: 'Starting an isolated sandbox and cloning the repository…' }); apSave(s);
+  try {
+    const r = await (await api('/api/task?action=start', { repo: s.repo, task: s.task })).json();
+    Object.assign(s, { taskId: r.taskId, envInfo: r.envInfo });
+    s.events.push({ type: 'info', text: `Sandbox ready (${r.driver}). ${r.envInfo.split('\n').find(l => l.startsWith('Commit')) || ''}` });
+    s.apiMessages = [{ role: 'user', content: 'Start working on the task now.' }];
+  } catch (e) { s.events.push({ type: 'error', text: e.message }); s.closed = true; s.running = false; busy = false; apSave(s); return; }
+  busy = false; s.running = false; apLoop(s);
+}
+async function apLoop(s) {
+  if (busy || s.done) return;
+  busy = true; s.running = true; apStop = false; s.error = false; s.stopped = false; apSave(s);
+  const tick = setInterval(() => { const t = $('apTime'); if (t && apLive(s)) { const x = Math.round((Date.now() - s.createdAt) / 1000); t.textContent = `${Math.floor(x / 60)}m ${x % 60}s`; } }, 1000);
+  while (!s.done && !apStop && s.steps < 40) {
+    let r, tries = 0;
+    while (true) {
+      try { r = await (await api('/api/task?action=step', { taskId: s.taskId, repo: s.repo, task: s.task, ticket: s.ticket, envInfo: s.envInfo, messages: s.apiMessages, speed: s.speed, playbook: s.playbook, knowledge: state.knowledge })).json(); break; }
+      catch (e) { if (++tries > 2 || /not found|expired|limit reached|locked/i.test(e.message)) { r = { error: e.message }; break; } await new Promise(res => setTimeout(res, 2500 * tries)); }
+    }
+    if (r.error) { s.events.push({ type: 'error', text: r.error }); s.error = true; if (/not found|expired/i.test(r.error)) s.closed = true; break; }
+    s.steps++; s.routes = s.routes || {}; if (r.tier) s.routes[r.tier] = (s.routes[r.tier] || 0) + 1; s.apiMessages.push(r.assistant); if (r.toolMessage) s.apiMessages.push(r.toolMessage);
+    s.events.push(...r.events);
+    if (r.done) { s.done = true; s.summary = r.summary; s.testCommand = r.testCommand; s.finishedAt = Date.now(); }
+    apSave(s);
+  }
+  if (!s.done && s.steps >= 40) s.events.push({ type: 'error', text: 'Reached 40 steps without finishing. Review the diff, then Resume or open a PR with the partial work.' });
+  if (apStop && !s.done) { s.stopped = true; s.events.push({ type: 'info', text: 'Stopped. Resume, view the diff, or open a PR with what is there.' }); }
+  clearInterval(tick); s.running = false; busy = false; apSave(s);
+}
+async function showDiff(s) {
+  const box = $('apDiff'); box.innerHTML = '<div class="info-line" style="margin-top:10px">Loading diff…</div>';
+  try {
+    const d = await (await api('/api/task?action=diff', { taskId: s.taskId })).json();
+    if (!d.diff.trim()) { box.innerHTML = '<div class="notice" style="margin-top:10px">No changes yet.</div>'; return; }
+    const lines = esc(d.diff).split('\n').map(l => `<span class="l ${l.startsWith('diff --git') ? 'f' : l.startsWith('@@') ? 'h' : l.startsWith('+') && !l.startsWith('+++') ? 'a' : l.startsWith('-') && !l.startsWith('---') ? 'd' : ''}">${l || ' '}</span>`).join('');
+    box.innerHTML = `<pre style="font-family:var(--mono);font-size:12px;color:var(--text2);margin:14px 2px 0;white-space:pre-wrap">${esc(d.stat)}</pre><div class="diff"><pre>${lines}</pre></div>`;
+  } catch (e) { box.innerHTML = `<div class="notice warn" style="margin-top:10px">${esc(e.message)}</div>`; }
+}
+async function openPR(s) {
+  const kind = s.repo.provider === 'gitlab' ? 'merge request' : 'pull request';
+  const title = prompt(`Title for the ${kind}:`, (s.ticket ? `${s.ticket.id}: ` : '') + s.task.split('\n')[0].slice(0, 90));
+  if (!title) return;
+  const b = $('apPrBtn'); if (b) { b.disabled = true; b.textContent = 'Opening…'; }
+  try { s.pr = await (await api('/api/task?action=pr', { taskId: s.taskId, repo: s.repo, title, summary: s.summary || `Work in progress from Cognitive Autopilot.\n\nTask: ${s.task}`, testCommand: s.done ? s.testCommand : '', ticket: s.ticket })).json(); apSave(s); toast('Opened ' + s.pr.kind); }
+  catch (e) { toast(e.message); if (b) { b.disabled = false; b.textContent = `Open ${kind}`; } }
+}
+
+/* ================= Daniel missions (v6) ================= */
+// A mission = plan the goal into tasks, then work every task until its tests are verified, commit each,
+// retry with fresh approaches, escalate models when stuck, revisit blocked tasks, and open one PR.
+// Cloud: this page drives the engine one step at a time (keep the tab open; it resumes when you return).
+// Local engine / desktop app: the engine runs on your machine in the background; this page just watches.
+let runtime = 'cloud', localInfo = null;
+const loops = new Set();
+const ACTIVE_PH = ['setup', 'planning', 'working', 'finalizing'];
+const agentName = () => state.daniel?.agentName || 'Daniel';
+const DANIEL_DEFAULTS = { agentName: 'Daniel', speed: 'fast', maxStepsPerTask: 25, maxAttempts: 3, maxTasks: 12, budgetUsd: 25, maxMinutes: 240, autoPR: true, setupScript: '', verifyCommand: '' };
+function parseEnv(text) { const o = {}; String(text || '').split('\n').forEach(l => { const m = l.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/); if (m) o[m[1]] = m[2].replace(/^["']|["']$/g, ''); }); return o; }
+function missionEnv() { return { ...parseEnv(state.envVars), ...parseEnv(state.secrets) }; }
+function missionSettings() { const d = { ...DANIEL_DEFAULTS, ...(state.daniel || {}) }; return { ...d, speed: state.speed || d.speed }; }
+
+async function detectRuntime() {
+  try { const r = await fetch('/api/local/info'); if (r.ok) { localInfo = await r.json(); if (localInfo.runtime === 'local') runtime = 'local'; } } catch (e) {}
+  document.body.classList.toggle('rt-local', runtime === 'local');
+}
+
+function newMissionState(goal, repo) {
+  return { id: 'm_' + uid(), version: 6, goal, repo, ticket: pendingTicket || null, playbook: playbookById(state.playbookId) || null, knowledge: state.knowledge,
+    settings: missionSettings(), env: missionEnv(), phase: 'setup', tasks: [], cur: null, steps: 0, errors: 0,
+    usage: { input: 0, output: 0, cost: 0, calls: 0, byTier: {} }, startedAt: Date.now(), updatedAt: Date.now() };
+}
+async function startMissionFromHome(text) {
+  if (!state.repo) { toast('Connect a repository or local folder first.'); askRepo(); return; }
+  const repo = state.repo.provider === 'local' ? { provider: 'local', name: state.repo.name, path: state.repo.path, branch: state.repo.branch } : { provider: state.repo.provider || 'github', name: state.repo.name, branch: state.repo.branch };
+  if (repo.provider === 'local' && runtime !== 'local') { toast('Local folders need the desktop app or local engine.'); return; }
+  const title = (pendingTicket ? pendingTicket.id + ': ' : '') + text.split('\n')[0].slice(0, 70);
+  const s = newSession({ type: 'mission', title, goal: text, events: [], local: runtime === 'local' });
+  if (runtime === 'local') {
+    try {
+      const r = await (await api('/api/mission?action=start', { goal: text, repo, ticket: pendingTicket, playbook: playbookById(state.playbookId) || null, knowledge: state.knowledge, settings: missionSettings(), env: missionEnv() })).json();
+      s.localId = r.id; s.mission = r.state; s.cursor = 0;
+    } catch (e) { s.mission = { phase: 'failed', tasks: [], usage: { cost: 0 }, steps: 0, startedAt: Date.now(), failReason: e.message, repo }; }
+  } else s.mission = newMissionState(text, repo);
+  pendingTicket = null; save(); renderAll();
+  if (runtime === 'local') pollLocal(s); else runCloudMission(s);
+}
+function saveThrottled() { clearTimeout(saveThrottled._t); saveThrottled._t = setTimeout(save, 400); }
+const missionLive = s => state.view === 'session' && state.currentId === s.id;
+function pushEvents(s, events) { if (!events?.length) return;
+  for (const e of events) if (e.type === 'mission' && state.notify && 'Notification' in window && Notification.permission === 'granted' && document.hidden) { try { new Notification(`${agentName()}: ${s.title}`, { body: e.text }); } catch (x) {} } s.events.push(...events); if (s.events.length > 1500) s.events.splice(0, s.events.length - 1500); }
+
+async function runCloudMission(s) {
+  if (loops.has(s.id)) return; loops.add(s.id);
+  const m = s.mission; s.pauseRequested = false;
+  try {
+    while (ACTIVE_PH.includes(s.mission.phase) && !s.pauseRequested) {
+      let r;
+      try { r = await (await api('/api/task?action=advance', { state: s.mission })).json(); }
+      catch (e) {
+        s.netErrors = (s.netErrors || 0) + 1;
+        pushEvents(s, [{ t: Date.now(), type: 'error', text: e.message, retrying: s.netErrors < 8 }]);
+        if (s.netErrors >= 8 || /locked|Invalid mission|too large/i.test(e.message)) { s.mission.resumePhase = s.mission.phase; s.mission.phase = 'paused'; s.mission.pauseReason = `Paused: ${e.message}`; break; }
+        await new Promise(res => setTimeout(res, Math.min(30000, 1500 * 2 ** s.netErrors)));
+        continue;
+      }
+      s.netErrors = 0; s.mission = r.state; pushEvents(s, r.events); s.updatedAt = Date.now();
+      saveThrottled(); if (missionLive(s)) renderMission(s); else renderSide();
+    }
+    if (s.pauseRequested && ACTIVE_PH.includes(s.mission.phase)) { s.mission.resumePhase = s.mission.phase; s.mission.phase = 'paused'; s.mission.pauseReason = 'Paused by you.'; pushEvents(s, [{ t: Date.now(), type: 'mission', status: 'paused', text: 'Paused by you.' }]); }
+  } finally { loops.delete(s.id); save(); if (missionLive(s)) renderMission(s); renderSide(); }
+}
+async function pollLocal(s) {
+  if (loops.has(s.id) || !s.localId) return; loops.add(s.id);
+  try {
+    while (true) {
+      let r;
+      try { r = await (await fetch(`/api/mission?action=get&id=${encodeURIComponent(s.localId)}&since=${s.cursor || 0}`)).json(); }
+      catch (e) { await new Promise(res => setTimeout(res, 3000)); continue; }
+      if (r.error) { s.mission = { ...(s.mission || {}), phase: 'failed', failReason: r.error }; break; }
+      s.mission = r.state; pushEvents(s, r.events); s.cursor = r.next; s.updatedAt = Date.now();
+      if (r.events.length) { saveThrottled(); if (missionLive(s)) renderMission(s); else renderSide(); }
+      if (!ACTIVE_PH.includes(s.mission.phase)) break;
+      await new Promise(res => setTimeout(res, missionLive(s) ? 1000 : 3000));
+    }
+  } finally { loops.delete(s.id); save(); if (missionLive(s)) renderMission(s); renderSide(); }
+}
+async function missionControl(s, action, settings) {
+  if (s.local) {
+    const r = await (await api(`/api/mission?action=${action}`, { id: s.localId, settings })).json();
+    if (r.state) s.mission = r.state; save(); if (action === 'resume') pollLocal(s); renderMission(s); return;
+  }
+  if (action === 'pause') { s.pauseRequested = true; toast('Pausing after the current step…'); return; }
+  if (action === 'stop') {
+    s.pauseRequested = true; s.mission.phase = 'stopped'; pushEvents(s, [{ t: Date.now(), type: 'mission', status: 'stopped', text: 'Stopped by you.' }]);
+    if (s.mission.taskId) api('/api/task?action=stop', { taskId: s.mission.taskId }).catch(() => {});
+    save(); renderMission(s); return;
+  }
+  if (action === 'resume') {
+    Object.assign(s.mission.settings, settings || {});
+    if (s.mission.phase === 'paused') { s.mission.phase = s.mission.resumePhase || 'working'; s.mission.pauseReason = null; s.mission.errors = 0; }
+    pushEvents(s, [{ t: Date.now(), type: 'info', text: 'Resumed.' }]); save(); runCloudMission(s); renderMission(s);
+  }
+}
+
+const PHASE_LABEL = { setup: 'Setting up', planning: 'Planning', working: 'Working', finalizing: 'Opening PR', done: 'Complete', paused: 'Paused', stopped: 'Stopped', failed: 'Failed' };
+const TASK_ICON = { pending: '<span class="tk pend">○</span>', running: '<span class="tk run"></span>', done: '<span class="tk ok">✓</span>', blocked: '<span class="tk bad">✕</span>' };
+function renderMission(s) {
+  const m = s.mission || { phase: 'setup', tasks: [], usage: {}, steps: 0, startedAt: s.createdAt };
+  const secs = Math.round(((m.finishedAt || (ACTIVE_PH.includes(m.phase) ? Date.now() : m.updatedAt || Date.now())) - (m.startedAt || s.createdAt)) / 1000);
+  const done = m.tasks.filter(t => t.status === 'done').length;
+  const active = ACTIVE_PH.includes(m.phase), live = loops.has(s.id) || (s.local && active);
+  const kind = m.repo?.provider === 'gitlab' ? 'merge request' : m.repo?.provider === 'local' ? 'branch' : 'pull request';
+  setTop(`<span>◆ ${esc(s.title)}</span><small>${esc(m.settings?.agentName || agentName())} · ${s.local ? 'local engine' : 'cloud'}</small>`, sessionActions(s));
+  const tiers = m.usage?.byTier || {};
+  $('view').innerHTML = `<div class="content">
+    <div class="card run-head">
+      <span class="stat"><span class="dot ${active ? 'live' : m.phase === 'done' ? 'ok' : ''}"></span><b>${PHASE_LABEL[m.phase] || m.phase}</b></span>
+      <span class="stat">Tasks <b>${done}/${m.tasks.length || '–'}</b></span><span class="stat">Steps <b>${m.steps || 0}</b></span>
+      <span class="stat">Time <b id="msTime">${Math.floor(secs / 60)}m ${secs % 60}s</b></span><span class="stat" title="Estimated model cost">Est. <b>$${(m.usage?.cost || 0).toFixed(2)}</b></span>
+      ${Object.keys(tiers).length ? `<span class="stat route">${Object.entries(tiers).map(([k, n]) => `<span class="pill ${k === 'fast' ? 'muted' : 'accent'}">${k} ×${n}</span>`).join('')}</span>` : ''}
+      <div class="run-actions">
+        ${active && (live || s.local) ? `<button class="btn" id="msPause">Pause</button>` : ''}
+        ${m.phase === 'paused' || (active && !live && !s.local) ? `<button class="btn btn-dark" id="msResume">Resume</button>` : ''}
+        ${m.phase === 'paused' || active ? `<button class="btn" id="msLimits">Limits</button>` : ''}
+        ${active || m.phase === 'paused' ? `<button class="btn btn-danger" id="msStop">Stop</button>` : ''}
+        ${m.taskId && m.phase !== 'stopped' ? `<button class="btn" id="msDiff">View diff</button>` : ''}
+        ${!s.local && m.taskId && !m.pr && ['paused', 'done', 'stopped'].includes(m.phase) && m.tasks.some(t => t.status === 'done') ? `<button class="btn btn-dark" id="msPr">Open ${kind}</button>` : ''}
+      </div></div>
+    ${m.phase === 'paused' ? `<div class="notice warn" style="margin-top:10px">⏸ ${esc(m.pauseReason || 'Paused.')}</div>` : ''}
+    ${m.phase === 'failed' ? `<div class="notice warn" style="margin-top:10px">⚠️ ${esc(m.failReason || 'The mission failed.')}</div>` : ''}
+    ${active && !live && !s.local ? `<div class="notice" style="margin-top:10px">This mission was running when the page closed. Press Resume to pick up where it left off.</div>` : ''}
+    <div id="msLimitsBox"></div>
+    <div class="task-line"><b style="color:var(--text)">Goal</b> · ${esc(s.goal).slice(0, 600)}${m.ticket ? ` · 🎫 <a href="${esc(m.ticket.url)}" target="_blank" rel="noopener">${esc(m.ticket.id)}</a>` : ''}${m.playbook ? ` · ▤ ${esc(m.playbook.name)}` : ''} · ${m.repo?.provider === 'local' ? '📁' : ''} ${esc(m.repo?.name || '')}</div>
+    ${m.tasks.length ? `<div class="card tasks">${m.summary ? `<div class="label" style="padding:12px 14px 0">Plan · ${esc(m.summary)}</div>` : ''}${m.tasks.map((t, i) => `<div class="task-row ${t.status}">${TASK_ICON[t.status] || ''}<div class="rt"><b>${i + 1}. ${esc(t.title)}</b><small>${t.status === 'done' ? `${t.verified ? `verified · <code>${esc(t.testCommand)}</code>` : 'no automated test'}${t.commit ? ` · ${esc(t.commit)}` : ''}` : t.status === 'running' ? `attempt ${t.attempts} · ${t.steps} steps${t.stuck ? ' · recovering with the strongest model' : ''}` : t.status === 'blocked' ? `blocked after ${t.attempts} attempts${t.revisited ? ' (revisited)' : ''}` : esc(t.acceptance || '').slice(0, 140)}</small></div></div>`).join('')}</div>` : ''}
+    <div class="timeline" id="msTimeline">${missionEventsHTML(s)}${active && (live || s.local) ? '<span class="typing" style="padding:4px 2px"><i></i><i></i><i></i></span>' : ''}</div>
+    <div id="msDiffBox"></div>
+    ${m.pr ? `<div class="pr">🚀 ${m.pr.url ? `${kind[0].toUpperCase() + kind.slice(1)} opened: <a href="${esc(m.pr.url)}" target="_blank" rel="noopener">${esc(m.pr.url)}</a>` : `Work is on branch <code style="font-family:var(--mono)">${esc(m.pr.branch)}</code> in your local repo`}<div style="font-size:12.5px;color:var(--text2);margin-top:6px">${done} of ${m.tasks.length} tasks verified${m.pr.files ? ` · ${m.pr.files} file(s)` : ''}</div></div>` : ''}
+  </div>`;
+  wireSessionActions(s);
+  if ($('msPause')) $('msPause').onclick = () => missionControl(s, 'pause');
+  if ($('msResume')) $('msResume').onclick = () => missionControl(s, 'resume');
+  if ($('msStop')) $('msStop').onclick = () => { if (confirm(`Stop ${agentName()}? Finished tasks stay committed in the workspace.`)) missionControl(s, 'stop'); };
+  if ($('msLimits')) $('msLimits').onclick = () => limitsForm(s);
+  if ($('msDiff')) $('msDiff').onclick = () => missionDiff(s);
+  if ($('msPr')) $('msPr').onclick = () => missionPR(s);
+  if (active) { const v = $('view'); if (v.scrollHeight - v.scrollTop - v.clientHeight < 300) v.scrollTop = v.scrollHeight; }
+}
+function missionEventsHTML(s) {
+  const evs = s.events.slice(-400); let lastTask = null, html = s.events.length > 400 ? `<div class="info-line">${s.events.length - 400} earlier events hidden · export the session to see everything</div>` : '';
+  for (const e of evs) {
+    if (e.type === 'plan') { html += `<div class="info-line">Planned ${e.tasks.length} task${e.tasks.length > 1 ? 's' : ''}.</div>`; continue; }
+    if (e.type === 'task') {
+      if (e.status === 'started') { html += `<div class="task-div">Task ${e.index + 1} · ${esc(e.title)}</div>`; lastTask = e.index; }
+      else html += `<div class="info-line">${e.status === 'done' ? `✓ Task ${e.index + 1} done${e.verified ? ' and verified' : ''}${e.commit ? ` · committed ${esc(e.commit)}` : ''}` : e.status === 'retry' ? `↻ Starting attempt ${e.attempt} with a fresh approach` : e.status === 'blocked' ? `✕ Task ${e.index + 1} blocked — moving on; it will be revisited at the end` : ''}</div>`;
+      continue;
+    }
+    if (e.type === 'pr') continue;
+    if (e.type === 'mission') { html += `<div class="info-line"><b>${esc(e.text)}</b></div>`; continue; }
+    if (e.type === 'error') { html += `<div class="notice warn">⚠️ ${esc(e.text)}${e.retrying ? ' — retrying automatically' : ''}</div>`; continue; }
+    html += evHTML(e).replace('<summary>', `<summary>${e.tier ? `<span class="pill ${e.tier === 'fast' ? 'muted' : 'accent'}" style="font-size:10px">${e.tier}</span>` : ''}`);
+  }
+  return html;
+}
+function limitsForm(s) {
+  const st = s.mission.settings || {};
+  $('msLimitsBox').innerHTML = `<div class="card card-pad" style="margin-top:10px"><div class="label" style="margin-bottom:8px">Limits for this mission</div><div class="limits">
+    <label>Budget (USD)<input class="field" id="lmBudget" type="number" min="1" step="1" value="${st.budgetUsd}"></label>
+    <label>Max minutes<input class="field" id="lmMin" type="number" min="5" step="5" value="${st.maxMinutes}"></label>
+    <label>Steps per attempt<input class="field" id="lmSteps" type="number" min="5" step="1" value="${st.maxStepsPerTask}"></label>
+    <label>Attempts per task<input class="field" id="lmAtt" type="number" min="1" max="6" step="1" value="${st.maxAttempts}"></label></div>
+    <div style="margin-top:10px;display:flex;gap:8px"><button class="btn btn-dark" id="lmApply">${s.mission.phase === 'paused' ? 'Save & resume' : 'Save'}</button><button class="btn" id="lmCancel">Cancel</button></div></div>`;
+  $('lmCancel').onclick = () => $('msLimitsBox').innerHTML = '';
+  $('lmApply').onclick = () => {
+    const ns = { budgetUsd: +$('lmBudget').value || st.budgetUsd, maxMinutes: +$('lmMin').value || st.maxMinutes, maxStepsPerTask: +$('lmSteps').value || st.maxStepsPerTask, maxAttempts: +$('lmAtt').value || st.maxAttempts };
+    if (s.mission.phase === 'paused') missionControl(s, 'resume', ns);
+    else { Object.assign(s.mission.settings, ns); if (s.local) api('/api/mission?action=resume', { id: s.localId, settings: ns }).catch(() => {}); save(); renderMission(s); toast('Limits saved'); }
+  };
+}
+async function missionDiff(s) {
+  const box = $('msDiffBox'); box.innerHTML = '<div class="info-line" style="margin-top:10px">Loading diff…</div>';
+  try {
+    const d = s.local ? await (await api('/api/mission?action=diff', { id: s.localId })).json() : await (await api('/api/task?action=diff', { taskId: s.mission.taskId, base: s.mission.baseSha })).json();
+    if (!d.diff.trim()) { box.innerHTML = '<div class="notice" style="margin-top:10px">No changes yet.</div>'; return; }
+    const lines = esc(d.diff).split('\n').map(l => `<span class="l ${l.startsWith('diff --git') ? 'f' : l.startsWith('@@') ? 'h' : l.startsWith('+') && !l.startsWith('+++') ? 'a' : l.startsWith('-') && !l.startsWith('---') ? 'd' : ''}">${l || ' '}</span>`).join('');
+    box.innerHTML = `<pre style="font-family:var(--mono);font-size:12px;color:var(--text2);margin:14px 2px 0;white-space:pre-wrap">${esc(d.stat)}</pre><div class="diff"><pre>${lines}</pre></div>`;
+  } catch (e) { box.innerHTML = `<div class="notice warn" style="margin-top:10px">${esc(e.message)}</div>`; }
+}
+async function missionPR(s) {
+  const m = s.mission; const kind = m.repo.provider === 'gitlab' ? 'merge request' : 'pull request';
+  const title = prompt(`Title for the ${kind}:`, (m.ticket ? `${m.ticket.id}: ` : '') + (m.summary || s.goal).split('\n')[0].slice(0, 100)); if (!title) return;
+  const done = m.tasks.filter(t => t.status === 'done');
+  try {
+    m.pr = await (await api('/api/task?action=pr', { taskId: m.taskId, repo: m.repo, base: m.baseSha, title, summary: `${m.summary || s.goal}\n\n${done.map(t => `- [x] ${t.title}${t.verified ? ` — verified with \`${t.testCommand}\`` : ''}`).join('\n')}`, ticket: m.ticket })).json();
+    save(); renderMission(s); toast('Opened ' + m.pr.kind);
+  } catch (e) { toast(e.message); }
+}
+function exportMission(s) {
+  const m = s.mission || {};
+  return `# ${agentName()} mission\n\n**Goal:** ${s.goal}\n\n**Repo:** ${m.repo?.name} · **Status:** ${PHASE_LABEL[m.phase] || m.phase} · **Tasks:** ${m.tasks?.filter(t => t.status === 'done').length}/${m.tasks?.length} · **Steps:** ${m.steps} · **Est. cost:** $${(m.usage?.cost || 0).toFixed(2)}\n\n` + (m.pr ? `**Result:** ${m.pr.url || m.pr.branch}\n\n` : '') +
+    `## Tasks\n\n${(m.tasks || []).map((t, i) => `${i + 1}. [${t.status === 'done' ? 'x' : ' '}] ${t.title} — ${t.status}${t.verified ? ` (verified: \`${t.testCommand}\`)` : ''}${t.summary ? `\n   ${t.summary.replace(/\n/g, ' ')}` : ''}`).join('\n')}\n\n## Timeline\n\n` +
+    s.events.map(e => e.type === 'tool' ? `- \`${evLabel(e)}\` → ${e.ok ? 'ok' : 'error'}` : e.type === 'verify' ? `- Verification \`${e.command}\`: ${e.ok ? 'passed' : 'failed'}` : e.type === 'text' ? `> ${e.text.replace(/\n/g, ' ')}` : e.type === 'task' ? `\n**Task ${e.index + 1} ${e.status}:** ${e.title}` : `- ${e.text || e.summary || ''}`).join('\n');
+}
+function resumeMissionsOnLoad() {
+  for (const s of state.sessions) {
+    if (s.type !== 'mission' || !s.mission) continue;
+    if (s.local && ACTIVE_PH.includes(s.mission.phase) && runtime === 'local') pollLocal(s);
+    else if (!s.local && ACTIVE_PH.includes(s.mission.phase) && state.daniel?.autoResume !== false) runCloudMission(s);
+  }
+}
+setInterval(() => { const s = cur(); if (s?.type === 'mission' && state.view === 'session' && ACTIVE_PH.includes(s.mission?.phase)) { const t = $('msTime'); if (t) { const x = Math.round((Date.now() - (s.mission.startedAt || s.createdAt)) / 1000); t.textContent = `${Math.floor(x / 60)}m ${x % 60}s`; } } }, 1000);
+
+/* ================= local folders ================= */
+async function connectLocalFolder(p) {
+  const r = await (await api('/api/local/check-folder', { path: p })).json();
+  state.repo = { ...r, files: [], private: true }; save(); renderAll(); toast(`Using local folder ${r.name} (${r.branch})`);
+}
+async function pickLocalFolder() {
+  let p = null;
+  if (window.danielDesktop?.pickFolder) p = await window.danielDesktop.pickFolder();
+  else p = prompt('Full path to a git repository on this computer:', state.repo?.provider === 'local' ? state.repo.path : '');
+  if (p) connectLocalFolder(p).catch(e => toast(e.message));
+}
+
+/* ================= analytics ================= */
+function missionStats() {
+  const ms = state.sessions.filter(s => s.type === 'mission' && s.mission);
+  const tasks = ms.flatMap(s => s.mission.tasks || []);
+  const done = tasks.filter(t => t.status === 'done'), blocked = tasks.filter(t => t.status === 'blocked');
+  const durs = done.filter(t => t.startedAt && t.finishedAt).map(t => (t.finishedAt - t.startedAt) / 60000);
+  return {
+    missions: ms.length, finished: ms.filter(s => s.mission.phase === 'done').length, active: ms.filter(s => ACTIVE_PH.includes(s.mission.phase)).length,
+    tasks: tasks.length, done: done.length, blocked: blocked.length, verified: done.filter(t => t.verified).length,
+    avgMin: durs.length ? durs.reduce((a, b) => a + b, 0) / durs.length : 0,
+    steps: ms.reduce((a, s) => a + (s.mission.steps || 0), 0), cost: ms.reduce((a, s) => a + (s.mission.usage?.cost || 0), 0),
+    prs: ms.filter(s => s.mission.pr).length, chats: state.sessions.filter(s => s.type === 'chat').length, swarms: state.sessions.filter(s => s.type === 'swarm').length, ms
+  };
+}
+function renderAnalytics(target = $('view'), withTop = true) {
+  if (withTop) setTop('Analytics');
+  const st = missionStats(); const pct = (a, b) => b ? Math.round(100 * a / b) + '%' : '–';
+  const tile = (k, v, sub) => `<div class="tile"><div class="tile-v">${v}</div><div class="tile-k">${k}</div>${sub ? `<div class="tile-s">${sub}</div>` : ''}</div>`;
+  target.innerHTML = `<div class="content" style="max-width:1000px"><div class="page-h">Analytics</div><div class="page-sub">How ${esc(agentName())} is performing across your missions in this ${runtime === 'local' ? 'app' : 'browser'}.</div>
+    <div class="tiles">${tile('Task completion', pct(st.done, st.tasks), `${st.done} of ${st.tasks} tasks`)}${tile('Verified by tests', pct(st.verified, st.done), `${st.verified} of ${st.done} done`)}${tile('Avg time per task', st.avgMin ? st.avgMin.toFixed(1) + ' min' : '–')}${tile('Missions finished', `${st.finished}/${st.missions}`, st.active ? `${st.active} running` : '')}${tile('PRs / branches', st.prs)}${tile('Est. model cost', '$' + st.cost.toFixed(2), st.done ? `$${(st.cost / st.done).toFixed(2)} per completed task` : '')}</div>
+    <div class="sec-title">Missions</div>
+    ${st.ms.length ? `<div class="card" style="overflow-x:auto"><table class="tbl"><thead><tr><th>Mission</th><th>Status</th><th>Tasks</th><th>Steps</th><th>Time</th><th>Est. cost</th><th>Result</th></tr></thead><tbody>${st.ms.map(s => { const m = s.mission; const secs = Math.round(((m.finishedAt || m.updatedAt || Date.now()) - (m.startedAt || s.createdAt)) / 1000); return `<tr data-sess="${s.id}" style="cursor:pointer"><td>${esc(s.title)}</td><td>${PHASE_LABEL[m.phase] || m.phase}</td><td>${(m.tasks || []).filter(t => t.status === 'done').length}/${(m.tasks || []).length}</td><td>${m.steps || 0}</td><td>${Math.floor(secs / 60)}m ${secs % 60}s</td><td>$${(m.usage?.cost || 0).toFixed(2)}</td><td>${m.pr ? (m.pr.url ? `<a href="${esc(m.pr.url)}" target="_blank" rel="noopener">PR</a>` : 'branch') : '–'}</td></tr>`; }).join('')}</tbody></table></div>` : `<div class="notice">No missions yet. Start one from the home screen.</div>`}
+    <div style="color:var(--text3);font-size:12px;margin-top:10px">${st.chats} chats · ${st.swarms} swarms · costs are estimates from token usage.</div></div>`;
+}
+
+/* ================= benchmark ================= */
+const SAMPLE_SUITE = {
+  name: 'My first benchmark',
+  repo: 'owner/repo  ← or {"local": "/path/to/repo"} in the desktop app',
+  tasks: [
+    { id: 'bug-1', goal: 'Page 2 of the product list repeats the last item of page 1. Fix it.', hidden: { files: [{ path: 'test/hidden_pagination.test.js', content: "// test the agent never sees until the end\n" }], command: 'npm test' } },
+    { id: 'feat-1', goal: 'Add a slugify(text) helper in src/utils with tests.', hidden: { files: [], command: 'node -e "const s=require(\'./src/utils/slugify\');process.exit(s(\' Hi There! \')===\'hi-there\'?0:1)"' } }
+  ]
+};
+function renderBenchmark() {
+  setTop('Benchmark');
+  const B = state.bench = state.bench || { suite: JSON.stringify(SAMPLE_SUITE, null, 2), results: {}, devin: {} };
+  let suite = null, err = ''; try { suite = JSON.parse(B.suite); } catch (e) { err = e.message; }
+  const rows = suite?.tasks || [];
+  const res = B.results || {}, dv = B.devin || {};
+  const ran = rows.filter(t => res[t.id]?.status === 'scored');
+  const dPass = ran.filter(t => res[t.id].passed).length, vScored = rows.filter(t => dv[t.id]?.result);
+  const vPass = vScored.filter(t => dv[t.id].result === 'pass').length;
+  const avg = (arr, f) => arr.length ? arr.reduce((a, x) => a + f(x), 0) / arr.length : 0;
+  $('view').innerHTML = `<div class="content" style="max-width:1080px"><div class="page-h">Benchmark</div><div class="page-sub">Measure ${esc(agentName())} on your own tasks with hidden tests it never sees, then record Devin's result on the same tasks for a fair side-by-side scorecard.</div>
+    <div class="tiles">
+      <div class="tile"><div class="tile-v">${ran.length ? Math.round(100 * dPass / ran.length) + '%' : '–'}</div><div class="tile-k">${esc(agentName())} pass rate</div><div class="tile-s">${dPass}/${ran.length} hidden tests passed</div></div>
+      <div class="tile"><div class="tile-v">${vScored.length ? Math.round(100 * vPass / vScored.length) + '%' : '–'}</div><div class="tile-k">Devin pass rate</div><div class="tile-s">${vPass}/${vScored.length} recorded</div></div>
+      <div class="tile"><div class="tile-v">${ran.length ? avg(ran, t => res[t.id].minutes).toFixed(1) + ' min' : '–'}</div><div class="tile-k">${esc(agentName())} avg time</div><div class="tile-s">${vScored.filter(t => dv[t.id].minutes).length ? `Devin ${avg(vScored.filter(t => dv[t.id].minutes), t => +dv[t.id].minutes).toFixed(1)} min` : ''}</div></div>
+      <div class="tile"><div class="tile-v">${ran.length ? '$' + avg(ran, t => res[t.id].cost).toFixed(2) : '–'}</div><div class="tile-k">Avg est. cost / task</div></div>
+    </div>
+    <div class="sec-title">Tasks</div>
+    ${err ? `<div class="notice warn">Suite JSON error: ${esc(err)}</div>` : `<div class="card" style="overflow-x:auto"><table class="tbl"><thead><tr><th>Task</th><th>${esc(agentName())}</th><th>Time</th><th>Steps</th><th>Est. cost</th><th>Devin</th><th>Devin min</th></tr></thead><tbody>${rows.map(t => { const r = res[t.id] || {}; const d = dv[t.id] || {}; return `<tr><td><b>${esc(t.id)}</b><div style="color:var(--text2);font-size:12px">${esc(String(t.goal).slice(0, 110))}</div></td><td>${r.status === 'scored' ? `<span class="pill ${r.passed ? 'ok' : 'bad'}">${r.passed ? 'pass' : 'fail'}</span>` : r.status ? `<span class="pill accent">${esc(r.status)}</span>` : '–'}${r.sessionId ? ` <a href="#" data-open="${r.sessionId}">open</a>` : ''}</td><td>${r.minutes != null ? r.minutes.toFixed(1) + 'm' : '–'}</td><td>${r.steps ?? '–'}</td><td>${r.cost != null ? '$' + r.cost.toFixed(2) : '–'}</td><td><select class="chip" data-devin="${esc(t.id)}"><option value="">–</option><option value="pass" ${d.result === 'pass' ? 'selected' : ''}>pass</option><option value="fail" ${d.result === 'fail' ? 'selected' : ''}>fail</option></select></td><td><input class="field" style="height:30px;width:70px" type="number" min="0" data-devin-min="${esc(t.id)}" value="${esc(d.minutes || '')}"></td></tr>`; }).join('')}</tbody></table></div>`}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn-dark" id="bnRun" ${benchRunning || err ? 'disabled' : ''}>${benchRunning ? 'Running…' : `Run ${esc(agentName())} on all tasks`}</button><button class="btn" id="bnExport">Export scorecard</button><button class="btn" id="bnReset">Clear results</button></div>
+    <div class="sec-title" style="margin-top:28px">Suite</div><div class="sec-sub">JSON: a repo and tasks, each with a goal and hidden test files + command that are added only after ${esc(agentName())} finishes. Use tasks you can also give Devin.</div>
+    <textarea class="kn" id="bnSuite" style="min-height:260px;font-family:var(--mono);font-size:12.5px">${esc(B.suite)}</textarea>
+    <div style="margin-top:8px"><button class="btn" id="bnSave">Save suite</button></div></div>`;
+  $('bnSave').onclick = () => { B.suite = $('bnSuite').value; save(); renderBenchmark(); toast('Suite saved'); };
+  $('bnReset').onclick = () => { if (confirm('Clear all benchmark results?')) { B.results = {}; save(); renderBenchmark(); } };
+  $('bnExport').onclick = () => download('benchmark-scorecard.md', `# Benchmark: ${suite?.name || ''}\n\n| Task | ${agentName()} | Time (min) | Steps | Est. cost | Devin | Devin min |\n|---|---|---|---|---|---|---|\n` + rows.map(t => { const r = res[t.id] || {}, d = dv[t.id] || {}; return `| ${t.id} | ${r.status === 'scored' ? (r.passed ? 'pass' : 'fail') : '–'} | ${r.minutes?.toFixed(1) ?? '–'} | ${r.steps ?? '–'} | ${r.cost != null ? '$' + r.cost.toFixed(2) : '–'} | ${d.result || '–'} | ${d.minutes || '–'} |`; }).join('\n') + `\n\n**${agentName()} pass rate:** ${ran.length ? Math.round(100 * dPass / ran.length) + '%' : '–'} · **Devin pass rate:** ${vScored.length ? Math.round(100 * vPass / vScored.length) + '%' : '–'}\n`);
+  if ($('bnRun')) $('bnRun').onclick = () => runBenchmark(suite);
+  document.querySelectorAll('[data-devin]').forEach(el => el.onchange = () => { (B.devin[el.dataset.devin] = B.devin[el.dataset.devin] || {}).result = el.value; save(); renderBenchmark(); });
+  document.querySelectorAll('[data-devin-min]').forEach(el => el.onchange = () => { (B.devin[el.dataset.devinMin] = B.devin[el.dataset.devinMin] || {}).minutes = el.value; save(); renderBenchmark(); });
+  document.querySelectorAll('[data-open]').forEach(a => a.onclick = e => { e.preventDefault(); go('session', { currentId: a.dataset.open }); });
+}
+let benchRunning = false;
+async function benchRepo(suite) {
+  const r = suite.repo;
+  if (r && typeof r === 'object' && r.local) { const x = await (await api('/api/local/check-folder', { path: r.local })).json(); return { provider: 'local', name: x.name, path: x.path, branch: x.branch }; }
+  const x = await (await api('/api/repo', { url: String(r) })).json(); return { provider: x.provider, name: x.name, branch: x.branch };
+}
+function waitMission(s) { return new Promise(res => { const t = setInterval(() => { if (!ACTIVE_PH.includes(s.mission?.phase) && !loops.has(s.id)) { clearInterval(t); res(); } }, 800); }); }
+async function runBenchmark(suite) {
+  if (benchRunning) return; benchRunning = true;
+  const B = state.bench; B.results = B.results || {};
+  try {
+    const repo = await benchRepo(suite);
+    for (const t of suite.tasks) {
+      const r = B.results[t.id] = { status: 'running' }; save(); if (state.view === 'benchmark') renderBenchmark();
+      const s = newSession({ type: 'mission', title: `[bench] ${t.id}`, goal: t.goal, events: [], local: runtime === 'local' }); state.view = 'benchmark'; state.currentId = null;
+      const settings = { ...missionSettings(), autoPR: false, maxTasks: 3 };
+      if (runtime === 'local') { const x = await (await api('/api/mission?action=start', { goal: t.goal, repo, settings, knowledge: state.knowledge, env: missionEnv() })).json(); s.localId = x.id; s.mission = x.state; s.cursor = 0; pollLocal(s); }
+      else { const prev = pendingTicket; pendingTicket = null; s.mission = { ...newMissionState(t.goal, repo), settings }; pendingTicket = prev; runCloudMission(s); }
+      r.sessionId = s.id; save();
+      await waitMission(s);
+      const m = s.mission; r.minutes = ((m.finishedAt || Date.now()) - m.startedAt) / 60000; r.steps = m.steps; r.cost = m.usage?.cost || 0; r.tasksDone = (m.tasks || []).filter(x => x.status === 'done').length;
+      r.status = 'scoring'; if (state.view === 'benchmark') renderBenchmark();
+      try {
+        const h = t.hidden || {};
+        const out = runtime === 'local' ? await (await api('/api/mission?action=hidden-test', { id: s.localId, files: h.files || [], command: h.command || 'true' })).json() : await (await api('/api/task?action=hidden-test', { taskId: m.taskId, files: h.files || [], command: h.command || 'true' })).json();
+        Object.assign(r, { status: 'scored', passed: !!out.passed, output: out.output });
+      } catch (e) { Object.assign(r, { status: 'scored', passed: false, output: e.message }); }
+      save(); if (state.view === 'benchmark') renderBenchmark();
+    }
+    toast('Benchmark finished');
+  } catch (e) { toast(e.message); }
+  benchRunning = false; save(); if (state.view === 'benchmark') renderBenchmark();
+}
+
+/* ================= agents directory ================= */
+function renderAgents() {
+  setTop('Agents');
+  const card = a => `<button class="ag-card" data-agent="${a.id}"><div class="ag" style="background:${a.colorLight}">${a.icon}</div><b>${esc(a.name.replace('Cognitive ', ''))}</b><small>${esc(a.tagline)}</small></button>`;
+  $('view').innerHTML = `<div class="content" style="max-width:1000px"><div class="page-h">Agents</div><div class="page-sub">Sixteen specialists. Start a conversation, or let Swarm combine them.</div>
+    <div class="label" style="margin-bottom:10px">Engineering</div><div class="grid-ag">${AGENTS.filter(a => ENG.includes(a.id)).map(card).join('')}</div>
+    <div class="label" style="margin:24px 0 10px">Business</div><div class="grid-ag">${AGENTS.filter(a => !ENG.includes(a.id)).map(card).join('')}</div></div>`;
+  document.querySelectorAll('[data-agent]').forEach(b => b.onclick = () => { state.askAgent = b.dataset.agent; state.mode = 'ask'; go('home'); });
+}
+
+/* ================= wiki ================= */
+let wikiBusy = false;
+function renderWiki() {
+  setTop('Wiki');
+  const r = state.repo;
+  if (!r) { $('view').innerHTML = `<div class="content"><div class="empty"><span class="mark lg">${MARK_SVG}</span><div class="page-h">Wiki for your codebase</div><div class="page-sub">Connect a repository and Cognitive writes an onboarding wiki: architecture, key flows, directory guide, conventions, and risks — with file paths.</div><button class="btn btn-dark" id="wkConnect">Connect a repository</button></div></div>`; $('wkConnect').onclick = askRepo; return; }
+  const key = `${r.name}@${r.branch}`, w = state.wikis[key];
+  $('view').innerHTML = `<div class="content"><div class="toolbar"><div style="flex:1;min-width:0"><div class="page-h">${esc(r.name)}</div><div style="color:var(--text2);font-size:13px">${w ? `Generated ${new Date(w.at).toLocaleString()} · branch ${esc(r.branch)}` : `Branch ${esc(r.branch)} · ${r.files.length} key files loaded`}</div></div>
+    ${w ? '<button class="btn" id="wkExport">Export</button>' : ''}<button class="btn btn-dark" id="wkGen" ${wikiBusy || busy ? 'disabled' : ''}>${wikiBusy ? 'Writing…' : w ? 'Regenerate' : 'Generate wiki'}</button></div>
+    <div class="card card-pad doc md" id="wkBody">${w ? md(w.text) : '<div style="color:var(--text2)">No wiki yet. Generate one from the loaded code — it takes about a minute.</div>'}</div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="wkAsk">Ask about this codebase</button></div></div>`;
+  $('wkGen').onclick = () => genWiki(key);
+  if ($('wkExport')) $('wkExport').onclick = () => download(`${r.name.replace(/\//g, '-')}-wiki.md`, w.text);
+  $('wkAsk').onclick = () => { state.mode = 'ask'; state.askAgent = 'engineer'; go('home'); };
+}
+async function genWiki(key) {
+  if (busy || wikiBusy) return;
+  wikiBusy = true; busy = true; controller = new AbortController(); renderWiki();
+  const body = $('wkBody'); body.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
+  const paint = rafRender(t => { const b = $('wkBody'); if (b && state.view === 'wiki') { b.innerHTML = md(t); b.classList.add('cursor'); } });
+  let text = '';
+  try { text = await streamAgent('engineer', [{ role: 'user', content: 'Write the wiki for this repository.' }], { onText: t => { text = t; paint(t); }, signal: controller.signal, extra: { purpose: 'wiki' } }); state.wikis[key] = { text, at: Date.now() }; }
+  catch (e) { toast(e.message); }
+  wikiBusy = false; busy = false; controller = null; save(); if (state.view === 'wiki') renderWiki();
+}
+
+/* ================= review ================= */
+let reviewState = { pr: null, text: '', busy: false, posted: '' };
+function renderReview() {
+  setTop('Review');
+  const R = reviewState, pr = R.pr;
+  $('view').innerHTML = `<div class="content"><div class="page-h">Review</div><div class="page-sub">Paste a pull request. Cognitive reads the diff${state.repo ? ` alongside ${esc(state.repo.name)}` : ''}, flags bugs, security issues and missing tests by severity, and can post the review back to the PR.</div>
+    <div class="toolbar"><input class="field" id="rvUrl" placeholder="https://github.com/owner/repo/pull/123  or  GitLab merge request URL" value="${pr ? esc(pr.url) : ''}"><button class="btn btn-dark" id="rvLoad" ${R.busy || busy ? 'disabled' : ''}>${pr ? 'Review again' : 'Review'}</button></div>
+    ${pr ? `<div class="card card-pad"><div style="font-weight:600;font-size:15px">${esc(pr.title)}</div><div class="pr-meta"><span>${esc(pr.id)}</span>${pr.author ? `<span>by ${esc(pr.author)}</span>` : ''}<span>${esc(pr.head || '')} → ${esc(pr.base || '')}</span><span>${pr.files ?? '?'} files</span>${pr.additions != null ? `<span style="color:var(--ok)">+${pr.additions}</span><span style="color:var(--bad)">−${pr.deletions}</span>` : ''}${pr.truncated ? '<span class="pill warn">large diff — truncated</span>' : ''}<a href="${esc(pr.url)}" target="_blank" rel="noopener">Open</a></div></div>
+    <div class="card card-pad doc md" id="rvBody" style="margin-top:12px">${R.text ? md(R.text) : '<span class="typing"><i></i><i></i><i></i></span>'}</div>
+    ${R.text && !R.busy ? `<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn btn-dark" id="rvPost" ${R.posted ? 'disabled' : ''}>${R.posted ? 'Posted' : 'Post review to the PR'}</button><button class="btn" id="rvCopy">Copy</button>${R.posted ? `<a href="${esc(R.posted)}" target="_blank" rel="noopener">View comment</a>` : ''}</div>` : ''}` : ''}
+  </div>`;
+  $('rvLoad').onclick = runReview; $('rvUrl').onkeydown = e => { if (e.key === 'Enter') runReview(); };
+  if ($('rvPost')) $('rvPost').onclick = async () => { if (!confirm('Post this review as a comment on the pull request?')) return; try { R.posted = (await (await api('/api/integrations?action=pr-comment', { url: pr.url, text: R.text })).json()).url || pr.url; toast('Review posted'); renderReview(); } catch (e) { toast(e.message); } };
+  if ($('rvCopy')) $('rvCopy').onclick = () => navigator.clipboard?.writeText(R.text).then(() => toast('Copied'));
+}
+async function runReview() {
+  const R = reviewState; if (R.busy || busy) return;
+  const url = $('rvUrl').value.trim(); if (!url) return;
+  R.busy = true; busy = true; R.text = ''; R.posted = '';
+  try { R.pr = await (await api('/api/integrations?action=pr', { ref: url })).json(); }
+  catch (e) { R.busy = false; busy = false; toast(e.message); return renderReview(); }
+  renderReview(); controller = new AbortController();
+  const paint = rafRender(t => { const b = $('rvBody'); if (b && state.view === 'review') { b.innerHTML = md(t); b.classList.add('cursor'); } });
+  try { R.text = await streamAgent('engineer', [{ role: 'user', content: `Review this pull request: ${R.pr.title}\n\n${R.pr.body || ''}`.slice(0, 8000) + (state.reviewFocus ? `\n\nTeam review focus: ${state.reviewFocus}` : '') }], { onText: t => { R.text = t; paint(t); }, signal: controller.signal, extra: { purpose: 'review', diff: R.pr.diff } }); }
+  catch (e) { R.text += `\n\n⚠️ ${e.message}`; }
+  R.busy = false; busy = false; controller = null; if (state.view === 'review') renderReview();
+}
+
+/* ================= customize: knowledge + playbooks ================= */
+function renderCustomize(target, only) {
+  const inSettings = !!target; target = target || $('view');
+  if (!inSettings) setTop('Customize');
+  target.innerHTML = `<div class="${inSettings ? '' : 'content'} cz ${only ? 'only-' + only : ''}"><div class="page-h">${only === 'playbooks' ? 'Playbooks' : only === 'knowledge' ? 'Knowledge' : 'Customize'}</div><div class="page-sub">Teach Cognitive how your team works. Knowledge applies to every agent, Swarm and ${esc(agentName())} run.</div>
+    <div class="kn-sec"><div class="sec-title">Knowledge</div><div class="sec-sub">Conventions, architecture notes, commands, do's and don'ts. Kept in this browser and sent with each request.</div>
+    <textarea class="kn" id="knText" placeholder="e.g. We use pnpm, not npm. Run tests with pnpm test -- --run. Never edit files in /generated. All API handlers validate input with zod. PR titles use Conventional Commits.">${esc(state.knowledge)}</textarea>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px"><button class="btn btn-dark" id="knSave">Save knowledge</button><span style="font-size:12px;color:var(--text3)" id="knCount">${state.knowledge.length}/8000</span></div></div>
+    <div class="pb-sec"><div class="sec-title" style="margin-top:34px">Playbooks</div><div class="sec-sub">Reusable instructions and success criteria. Pick one in the composer for ${esc(agentName())} or Swarm.</div>
+    <div class="card">${allPlaybooks().map(p => `<div class="row"><div class="ri">▤</div><div class="rt"><b>${esc(p.name)}</b><small style="white-space:pre-line">${esc(p.instructions).slice(0, 220)}${p.instructions.length > 220 ? '…' : ''}</small></div>${p.id.startsWith('pb-') ? '<span class="pill muted">Built-in</span>' : `<button class="btn" data-pb-edit="${p.id}">Edit</button><button class="btn btn-danger" data-pb-del="${p.id}">Delete</button>`}</div>`).join('')}</div>
+    <div class="card card-pad" style="margin-top:12px" id="pbForm"><div class="label" style="margin-bottom:8px" id="pbFormTitle">New playbook</div>
+      <input class="field" id="pbName" placeholder="Name, e.g. Add an API endpoint" style="margin-bottom:8px"><div class="pb"><textarea id="pbIns" placeholder="Steps, guardrails, and success criteria…"></textarea></div>
+      <div style="margin-top:8px;display:flex;gap:8px"><button class="btn btn-dark" id="pbSave">Save playbook</button><button class="btn" id="pbCancel" style="display:none">Cancel</button></div></div></div></div>`;
+  const again = () => inSettings ? renderSettings() : renderCustomize();
+  $('knText').oninput = e => { $('knCount').textContent = `${e.target.value.length}/8000`; };
+  $('knSave').onclick = () => { state.knowledge = $('knText').value.slice(0, 8000); save(); toast('Knowledge saved'); };
+  let editing = null;
+  document.querySelectorAll('[data-pb-edit]').forEach(b => b.onclick = () => { const p = state.playbooks.find(x => x.id === b.dataset.pbEdit); editing = p.id; $('pbName').value = p.name; $('pbIns').value = p.instructions; $('pbFormTitle').textContent = 'Edit playbook'; $('pbCancel').style.display = ''; $('pbName').focus(); });
+  document.querySelectorAll('[data-pb-del]').forEach(b => b.onclick = () => { if (!confirm('Delete this playbook?')) return; state.playbooks = state.playbooks.filter(x => x.id !== b.dataset.pbDel); if (state.playbookId === b.dataset.pbDel) state.playbookId = ''; save(); again(); });
+  $('pbCancel').onclick = () => again();
+  $('pbSave').onclick = () => {
+    const name = $('pbName').value.trim(), instructions = $('pbIns').value.trim();
+    if (!name || !instructions) return toast('Add a name and instructions.');
+    if (editing) Object.assign(state.playbooks.find(x => x.id === editing), { name, instructions });
+    else state.playbooks.push({ id: 'my-' + uid(), name: name.slice(0, 80), instructions: instructions.slice(0, 6000) });
+    save(); toast('Playbook saved'); again();
+  };
+}
+
+/* ================= settings (v6) ================= */
+const SET_GROUPS = [
+  ['Personal', [['general', 'Preferences'], ['shortcuts', 'Keyboard shortcuts'], ['connections', 'Connections']]],
+  ['Workspace', [['plans', 'Plans'], ['usage', 'Usage & limits'], ['daniel', 'Agent'], ['review', 'Review'], ['wiki', 'Wiki'], ['knowledge', 'Knowledge'], ['playbooks', 'Playbooks'], ['environment', 'Environment'], ['secrets', 'Secrets'], ['repositories', 'Repositories'], ['analytics', 'Analytics'], ['api', 'API'], ['local', 'Local engine & desktop'], ['data', 'Data & privacy']]]
+];
+const SET_TABS = SET_GROUPS.flatMap(g => g[1]);
+const SHORTCUTS = [['N', 'New session'], ['/', 'Focus the composer'], ['Enter', 'Send'], ['Shift + Enter', 'New line'], ['.', 'Pause or resume the open mission'], ['G then A', 'Go to Analytics'], ['G then B', 'Go to Benchmark'], ['G then S', 'Go to Settings'], ['Esc', 'Close menus']];
+function row(icon, title, desc, control) { return `<div class="row">${icon ? `<div class="ri">${icon}</div>` : ''}<div class="rt"><b>${title}</b>${desc ? `<small>${desc}</small>` : ''}</div>${control || ''}</div>`; }
+function num(id, val, min, max, step = 1) { return `<input class="field" id="${id}" type="number" min="${min}" ${max ? `max="${max}"` : ''} step="${step}" value="${esc(val)}" style="max-width:120px;height:36px">`; }
+function toggle(id, on) { return `<label class="switch"><input type="checkbox" id="${id}" ${on ? 'checked' : ''}><span></span></label>`; }
+function dn() { state.daniel = { ...DANIEL_DEFAULTS, ...(state.daniel || {}) }; return state.daniel; }
+async function renderSettings() {
+  let tab = state.settingsTab || 'general'; if (!SET_TABS.find(t => t[0] === tab)) tab = 'general';
+  setTop(`Settings <small>${SET_TABS.find(t => t[0] === tab)[1]}</small>`);
+  $('view').innerHTML = `<div class="settings"><nav class="set-nav">${SET_GROUPS.map(([g, tabs]) => `<div class="set-group">${g}</div>${tabs.filter(([k]) => k !== 'local' || true).map(([k, l]) => `<button class="nav-item ${k === tab ? 'on' : ''}" data-tab="${k}">${l}</button>`).join('')}`).join('')}</nav><div class="set-body"><div class="set-wrap" id="setBody"></div></div></div>`;
+  document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { state.settingsTab = b.dataset.tab; state.view = b.dataset.tab === 'plans' ? 'plans' : b.dataset.tab === 'connections' ? 'connections' : 'settings'; save(); renderAll(); });
+  const body = $('setBody'); const D = dn();
+  const saved = () => { save(); toast('Saved'); };
+  if (tab === 'general') {
+    body.innerHTML = `<div class="page-h">Preferences</div><div class="page-sub">Your profile and how the app behaves on this device.</div>
+      <div class="card">${row('', 'Name', 'Shown in greetings.', `<input class="field" id="setName" style="max-width:240px;height:36px" value="${esc(state.profile.name)}">`)}
+      ${row('', 'Theme', 'Follow your system, or pick one.', `<div class="seg" style="margin:0">${['system', 'light', 'dark'].map(t => `<button data-theme-set="${t}" class="${state.theme === t ? 'on' : ''}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}</div>`)}
+      ${row('', 'Default mode', 'What the composer opens with.', `<div class="seg" style="margin:0">${Object.keys(MODES).map(k => `<button data-mode-set="${k}" class="${state.mode === k ? 'on' : ''}">${k === 'autopilot' ? esc(agentName()) : MODES[k].label}</button>`).join('')}</div>`)}
+      ${row('', 'Notify when a mission finishes', 'Browser notification when a mission completes or needs you.', toggle('setNotify', state.notify))}
+      ${row('', 'Access code', state.accessCode ? 'Saved on this device.' : 'Needed if your workspace is protected.', `<button class="btn" id="setCode">${state.accessCode ? 'Change' : 'Enter code'}</button>`)}
+      ${row('', 'Welcome tour', 'See the onboarding again.', '<button class="btn" id="setTour">Replay</button>')}</div>`;
+    $('setName').onchange = e => { state.profile.name = e.target.value.trim(); saved(); renderSide(); };
+    body.querySelectorAll('[data-theme-set]').forEach(b => b.onclick = () => { state.theme = b.dataset.themeSet; applyTheme(); save(); renderSettings(); });
+    body.querySelectorAll('[data-mode-set]').forEach(b => b.onclick = () => { state.mode = b.dataset.modeSet; save(); renderSettings(); });
+    $('setNotify').onchange = async e => { state.notify = e.target.checked; if (state.notify && 'Notification' in window && Notification.permission === 'default') await Notification.requestPermission().catch(() => {}); saved(); };
+    $('setCode').onclick = () => { const c = prompt('Access code:', ''); if (c !== null) { state.accessCode = c.trim(); save(); loadIntegrations(); renderSettings(); toast('Saved'); } };
+    $('setTour').onclick = () => { obStep = 0; obUse = state.profile.use || ''; $('onboard').classList.add('open'); renderOnboard(); };
+  } else if (tab === 'shortcuts') {
+    body.innerHTML = `<div class="page-h">Keyboard shortcuts</div><div class="page-sub">Work without leaving the keyboard.</div><div class="card">${SHORTCUTS.map(([k, d]) => row('', d, '', `<span class="kbd-l">${k.split(' ').map(x => ['then', '+'].includes(x) ? `<span style="color:var(--text3);font-size:11px">${x}</span>` : `<kbd>${esc(x)}</kbd>`).join(' ')}</span>`)).join('')}</div>`;
+  } else if (tab === 'connections') {
+    body.innerHTML = `<div class="page-h">Connections</div><div class="page-sub">${runtime === 'local' ? 'In the desktop app, add keys under Local engine & desktop. ' : 'Add environment variables in Vercel → Project → Settings → Environment Variables, then redeploy. '}Secrets never reach the browser.</div><div class="card" id="connList"><div class="row"><div class="rt"><small>Checking…</small></div></div></div>`;
+    await loadIntegrations(); if (state.settingsTab !== 'connections') return;
+    $('connList').innerHTML = CONNS.map(([ic, name, key, desc, how]) => {
+      const v = integ[key]; const on = key === 'sandbox' || !!v;
+      const icon = ic === 'gh' ? `<span style="width:16px;height:16px;display:inline-flex">${GH_ICON}</span>` : ic === 'gl' ? `<span style="width:16px;height:16px;display:inline-flex">${GL_ICON}</span>` : ic;
+      return row(icon, name, `${desc}<br>${how}`, `<span class="pill ${on ? 'ok' : 'muted'}">${key === 'sandbox' ? (v === 'local' ? 'This computer' : 'Vercel') : on ? 'Connected' : 'Not set'}</span>`);
+    }).join('');
+  } else if (tab === 'plans') {
+    await loadIntegrations(); if (state.settingsTab !== 'plans') return;
+    body.style.maxWidth = '980px';
+    body.innerHTML = `<div class="page-h">Plans</div><div class="page-sub">Simple monthly pricing. Cancel anytime.</div>
+      <div class="plans">${PLANS.map(p => `<div class="plan ${p.pop ? 'pop' : ''}">${p.pop ? '<span class="tag">Most popular</span>' : ''}<h3>${p.name}</h3><div class="price">$${p.price}<small> / month</small></div><div class="for">${p.for}</div><ul>${p.feats.map(f => `<li>${esc(f.replace('Daniel', agentName()))}</li>`).join('')}</ul><button class="btn ${p.pop ? 'btn-accent' : 'btn-dark'} btn-block btn-lg" data-plan="${p.id}">${state.plan === p.name ? 'Current plan' : `Choose ${p.name}`}</button></div>`).join('')}</div>
+      <div class="card ent"><div class="rt"><b style="font-size:15px">Enterprise</b><div style="color:var(--text2);font-size:13px;margin-top:3px">Custom deployment, security review, volume pricing, and a dedicated account team.</div></div><a class="btn btn-lg" href="mailto:hello@cognitiveai.dev?subject=Cognitive%20AI%20Enterprise">Contact sales</a></div>
+      <div style="color:var(--text3);font-size:12px;margin-top:14px">${integ.stripe ? 'Payments are processed securely by Stripe.' : 'Online checkout opens soon — choosing a plan emails our team for now.'}</div>`;
+    body.querySelectorAll('[data-plan]').forEach(b => b.onclick = () => checkout(b.dataset.plan, b));
+  } else if (tab === 'usage') {
+    const st = missionStats();
+    body.innerHTML = `<div class="page-h">Usage & limits</div><div class="page-sub">Guardrails that keep a non-stop agent safe. When a limit is reached, the mission pauses — it never throws work away — and you can raise the limit and resume.</div>
+      <div class="tiles">${[['Missions', st.missions], ['Tasks completed', st.done], ['Steps', st.steps], ['Est. model cost', '$' + st.cost.toFixed(2)]].map(([k, v]) => `<div class="tile"><div class="tile-v">${v}</div><div class="tile-k">${k}</div></div>`).join('')}</div>
+      <div class="card" style="margin-top:14px">${row('', 'Budget per mission (USD)', 'Estimated model spend before the mission pauses.', num('lmB', D.budgetUsd, 1, 5000))}
+      ${row('', 'Time per mission (minutes)', 'Wall-clock time before the mission pauses.', num('lmM', D.maxMinutes, 5, 10080, 5))}
+      ${row('', 'Steps per attempt', 'How many tool steps one attempt at a task may take.', num('lmS', D.maxStepsPerTask, 5, 200))}
+      ${row('', 'Attempts per task', 'Fresh approaches before a task is parked as blocked (it is revisited at the end).', num('lmA', D.maxAttempts, 1, 8))}
+      ${row('', 'Max tasks per mission', 'Upper bound on how finely the planner splits a goal.', num('lmT', D.maxTasks, 1, 40))}</div>
+      <div style="margin-top:10px"><button class="btn btn-dark" id="lmSave">Save limits</button></div>`;
+    $('lmSave').onclick = () => { Object.assign(D, { budgetUsd: +$('lmB').value, maxMinutes: +$('lmM').value, maxStepsPerTask: +$('lmS').value, maxAttempts: +$('lmA').value, maxTasks: +$('lmT').value }); saved(); };
+  } else if (tab === 'daniel') {
+    body.innerHTML = `<div class="page-h">Agent</div><div class="page-sub">How your autonomous engineer behaves.</div>
+      <div class="card">${row('◆', 'Agent name', 'Shown everywhere in the app, in PRs and in notifications.', `<input class="field" id="agName" style="max-width:200px;height:36px" value="${esc(D.agentName)}">`)}
+      ${row('', 'Default speed', 'Fast routes exploration to a fast model and switches to the main model to change code; Max uses the strongest model throughout.', `<select class="chip" id="agSpeed">${Object.entries(SPEEDS).map(([k, v]) => `<option value="${k}" ${state.speed === k ? 'selected' : ''}>${v[0]}</option>`).join('')}</select>`)}
+      ${row('', 'Open a pull request automatically', 'When every task is done (or the rest are blocked), open one PR/MR — or create a branch for local folders.', toggle('agPR', D.autoPR))}
+      ${row('', 'Regression check', 'Command run after every task, in addition to the task\'s own tests (e.g. npm test, pytest -q). Leave empty to skip.', `<input class="field" id="agVerify" style="max-width:260px;height:36px" placeholder="npm test" value="${esc(D.verifyCommand)}">`)}
+      ${row('', 'Resume cloud missions on open', 'When you come back to this page, missions that were running continue automatically.', toggle('agResume', D.autoResume !== false))}</div>
+      <div style="margin-top:10px"><button class="btn btn-dark" id="agSave">Save</button></div>`;
+    $('agSave').onclick = () => { Object.assign(D, { agentName: ($('agName').value.trim() || 'Daniel').slice(0, 32), autoPR: $('agPR').checked, verifyCommand: $('agVerify').value.trim(), autoResume: $('agResume').checked }); state.speed = $('agSpeed').value; saved(); renderAll(); };
+  } else if (tab === 'review') {
+    body.innerHTML = `<div class="page-h">Review</div><div class="page-sub">Defaults for pull-request reviews.</div>
+      <div class="card">${row('', 'Review focus', 'Added to every review, e.g. "We care most about SQL injection and N+1 queries."', '')}<div style="padding:0 16px 14px"><textarea class="kn" id="rvFocus" style="min-height:90px">${esc(state.reviewFocus || '')}</textarea></div></div>
+      <div style="margin-top:10px"><button class="btn btn-dark" id="rvSaveF">Save</button> <button class="btn" data-nav-go="review">Open Review</button></div>`;
+    $('rvSaveF').onclick = () => { state.reviewFocus = $('rvFocus').value.slice(0, 2000); saved(); };
+  } else if (tab === 'wiki') {
+    const keys = Object.keys(state.wikis || {});
+    body.innerHTML = `<div class="page-h">Wiki</div><div class="page-sub">Onboarding wikis generated for your repositories, cached on this device.</div>
+      <div class="card">${keys.length ? keys.map(k => row('📘', esc(k), `Generated ${new Date(state.wikis[k].at).toLocaleString()}`, `<button class="btn btn-danger" data-wk-del="${esc(k)}">Delete</button>`)).join('') : row('', 'No wikis yet', 'Open Wiki and generate one for your connected repo.', '<button class="btn" data-nav-go="wiki">Open Wiki</button>')}</div>`;
+    body.querySelectorAll('[data-wk-del]').forEach(b => b.onclick = () => { delete state.wikis[b.dataset.wkDel]; save(); renderSettings(); });
+  } else if (tab === 'knowledge' || tab === 'playbooks') {
+    renderCustomize(body, tab);
+  } else if (tab === 'environment') {
+    body.innerHTML = `<div class="page-h">Environment</div><div class="page-sub">How ${esc(agentName())}'s workspace is prepared before work starts.</div>
+      <div class="sec-title">Setup script</div><div class="sec-sub">Runs once after the repo is cloned, before planning. E.g. <code>npm ci</code> or <code>pip install -r requirements.txt</code>.</div>
+      <textarea class="kn" id="envSetup" style="min-height:90px;font-family:var(--mono)" placeholder="npm ci">${esc(D.setupScript)}</textarea>
+      <div class="sec-title">Environment variables</div><div class="sec-sub">Non-secret <code>KEY=value</code> lines made available to every command (e.g. <code>NODE_ENV=test</code>).</div>
+      <textarea class="kn" id="envVars" style="min-height:90px;font-family:var(--mono)" placeholder="NODE_ENV=test">${esc(state.envVars || '')}</textarea>
+      <div style="margin-top:10px"><button class="btn btn-dark" id="envSave">Save</button></div>`;
+    $('envSave').onclick = () => { D.setupScript = $('envSetup').value.trim(); state.envVars = $('envVars').value; saved(); };
+  } else if (tab === 'secrets') {
+    const n = Object.keys(parseEnv(state.secrets)).length;
+    body.innerHTML = `<div class="page-h">Secrets</div><div class="page-sub">Credentials ${esc(agentName())} can use inside its workspace, e.g. a test database URL or a package registry token. ${runtime === 'local' ? 'They stay on this computer.' : 'They are stored in this browser and sent over HTTPS only to your own deployment\'s isolated sandbox — use the desktop app for anything sensitive.'} The agent is instructed never to print them.</div>
+      <div class="card">${row('🔐', `${n} secret${n === 1 ? '' : 's'} saved`, Object.keys(parseEnv(state.secrets)).map(k => `<code>${esc(k)}</code>`).join(' ') || 'None yet.', n ? '<button class="btn btn-danger" id="secClear">Clear all</button>' : '')}</div>
+      <div class="sec-title">Add or replace</div><textarea class="kn" id="secNew" style="min-height:80px;font-family:var(--mono)" placeholder="TEST_DATABASE_URL=postgres://…"></textarea>
+      <div style="margin-top:10px"><button class="btn btn-dark" id="secSave">Save secrets</button></div>`;
+    $('secSave').onclick = () => { const merged = { ...parseEnv(state.secrets), ...parseEnv($('secNew').value) }; state.secrets = Object.entries(merged).map(([k, v]) => `${k}=${v}`).join('\n'); saved(); renderSettings(); };
+    if ($('secClear')) $('secClear').onclick = () => { if (confirm('Delete all secrets?')) { state.secrets = ''; saved(); renderSettings(); } };
+  } else if (tab === 'repositories') {
+    const r = state.repo;
+    body.innerHTML = `<div class="page-h">Repositories</div><div class="page-sub">The codebase your agents work against.</div>
+      <div class="card">${r ? row(`<span style="width:16px;height:16px;display:inline-flex">${r.provider === 'gitlab' ? GL_ICON : r.provider === 'local' ? '📁' : GH_ICON}</span>`, esc(r.name), `${r.provider === 'local' ? esc(r.path) + ' · ' : ''}Branch ${esc(r.branch)} · ${r.fileCount?.toLocaleString?.() || 0} files`, `${r.provider !== 'local' ? '<button class="btn" id="repoRefresh">Refresh</button>' : ''}<button class="btn btn-danger" id="repoDrop">Disconnect</button>`) : ''}
+      ${row('', r ? 'Switch repository' : 'Connect a repository', 'GitHub or GitLab. Public repos work right away.', '<input class="field" id="repoNew" placeholder="owner/repo or URL" style="max-width:240px;height:36px"><button class="btn btn-dark" id="repoGo">Connect</button>')}
+      ${runtime === 'local' ? row('📁', 'Use a folder on this computer', 'Any git repository. Your working copy is never touched — results arrive as a new branch.', '<button class="btn" id="repoLocal">Choose folder</button>') : ''}</div>`;
+    if ($('repoRefresh')) $('repoRefresh').onclick = () => connectRepo(r.webUrl || r.name).then(renderSettings).catch(e => toast(e.message));
+    if ($('repoDrop')) $('repoDrop').onclick = () => { state.repo = null; save(); renderAll(); };
+    $('repoGo').onclick = () => connectRepo($('repoNew').value).then(renderSettings).catch(e => toast(e.message));
+    $('repoNew').onkeydown = e => { if (e.key === 'Enter') $('repoGo').click(); };
+    if ($('repoLocal')) $('repoLocal').onclick = pickLocalFolder;
+  } else if (tab === 'analytics') {
+    renderAnalytics(body, false);
+  } else if (tab === 'api') {
+    const base = location.origin;
+    body.innerHTML = `<div class="page-h">API</div><div class="page-sub">Drive ${esc(agentName())} from scripts, CI, or other tools. Send your access code in the <code>x-access-code</code> header.</div>
+      <div class="md doc">${md(runtime === 'local' ? `**Start a mission (local engine)**\n\n\`\`\`bash\ncurl -X POST ${base}/api/mission?action=start \\\n  -H 'content-type: application/json' \\\n  -d '{"goal":"Fix the failing tests","repo":{"provider":"local","path":"/path/to/repo"}}'\n\`\`\`\n\n**Watch it**\n\n\`\`\`bash\ncurl "${base}/api/mission?action=get&id=<id>&since=0"\n\`\`\`\n\nOther actions: \`list\`, \`pause\`, \`resume\`, \`stop\`, \`diff\`, \`delete\`. Or use the CLI: \`daniel run "<goal>" --repo .\`` : `**Advance a mission (cloud)** — the engine is a state machine; call \`advance\` until \`phase\` is \`done\`:\n\n\`\`\`bash\ncurl -X POST ${base}/api/task?action=advance \\\n  -H 'content-type: application/json' -H 'x-access-code: $CODE' \\\n  -d '{"state": {"version":6,"goal":"Fix the failing tests","repo":{"provider":"github","name":"owner/repo","branch":"main"},"settings":{},"phase":"setup","tasks":[],"steps":0,"errors":0,"usage":{"input":0,"output":0,"cost":0},"startedAt":${Date.now()}}}'\n\`\`\`\n\nEach response returns \`{state, events}\`; send \`state\` back on the next call.\n\nAlso: \`/api/chat\` (streaming agents), \`/api/plan\` (swarm plans), \`/api/repo\`, \`/api/integrations?action=ticket|pr|pr-comment|notify\`, \`/api/task?action=start|step|diff|pr|stop|hidden-test\`.`)}</div>`;
+  } else if (tab === 'local') {
+    if (runtime !== 'local') {
+      body.innerHTML = `<div class="page-h">Local engine & desktop</div><div class="page-sub">Run ${esc(agentName())} on your own computer: work on local folders, keep missions running in the background, and pick up after restarts.</div>
+        <div class="card">${row('💻', 'Desktop app', 'Windows, macOS and Linux. Includes the local engine — no terminal needed.', '<a class="btn btn-dark" href="https://github.com/" target="_blank" rel="noopener" id="dlDesk">Downloads</a>')}
+        ${row('⌨️', 'Command line', '<code>npx cognitive-daniel</code> starts the local app; <code>daniel run "fix the failing tests" --repo .</code> runs a mission in your terminal.', '')}
+        ${row('📱', 'Install this web app', 'Add Cognitive to your home screen or dock on any device.', '<button class="btn" id="pwaInstall">Install</button>')}</div>`;
+      $('pwaInstall').onclick = () => installPWA();
+      $('dlDesk').onclick = e => { e.preventDefault(); toast('Download links appear here once you publish the desktop builds (see README).'); };
+      return;
+    }
+    const info = localInfo || {};
+    const keys = [['ANTHROPIC_API_KEY', 'Anthropic API key', true], ['GITHUB_TOKEN', 'GitHub token', true], ['GITLAB_TOKEN', 'GitLab token', true], ['GITLAB_URL', 'GitLab URL (self-hosted)', false], ['SLACK_WEBHOOK_URL', 'Slack webhook URL', true], ['TEAMS_WEBHOOK_URL', 'Teams webhook URL', true], ['LINEAR_API_KEY', 'Linear API key', true], ['JIRA_BASE_URL', 'Jira URL', false], ['JIRA_EMAIL', 'Jira email', false], ['JIRA_API_TOKEN', 'Jira API token', true]];
+    body.innerHTML = `<div class="page-h">Local engine & desktop</div><div class="page-sub">${esc(agentName())} is running on ${esc(info.host || 'this computer')} (engine ${esc(info.version || '')}). Keys are stored only on this computer in <code>${esc(info.dataDir || '~/.daniel')}</code>.</div>
+      <div class="card">${keys.map(([k, label, secret]) => row(info.configured?.[k] ? '✅' : '○', label, info.configured?.[k] ? (secret ? 'Saved' : esc(info.values?.[k] || 'Saved')) : 'Not set', `<input class="field" data-cfg="${k}" type="${secret ? 'password' : 'text'}" placeholder="${info.configured?.[k] ? 'Replace…' : 'Paste here'}" style="max-width:240px;height:36px" autocomplete="off">`)).join('')}</div>
+      <div style="margin-top:10px;display:flex;gap:8px"><button class="btn btn-dark" id="cfgSave">Save keys</button><span style="font-size:12px;color:var(--text3);align-self:center">${info.activeMissions || 0} mission(s) running in the background</span></div>`;
+    $('cfgSave').onclick = async () => {
+      const patch = {}; body.querySelectorAll('[data-cfg]').forEach(i => { if (i.value.trim()) patch[i.dataset.cfg] = i.value.trim(); });
+      if (!Object.keys(patch).length) return toast('Nothing to save.');
+      await fetch('/api/local/config', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(patch) });
+      await detectRuntime(); await loadIntegrations(); toast('Keys saved on this computer'); renderSettings();
+    };
+  } else {
+    const bytes = new Blob([localStorage.getItem(STORE_KEY) || '']).size;
+    body.innerHTML = `<div class="page-h">Data & privacy</div><div class="page-sub">Sessions are stored only on this device. Code runs in isolated workspaces that are deleted when a task ends or expires.</div>
+      <div class="card">${row('', 'Local storage', `${state.sessions.length} sessions · ${(bytes / 1024).toFixed(0)} KB`, '<button class="btn" id="expAll">Export all</button>')}
+      ${row('', 'Clear sessions', 'Removes all session history from this device.', '<button class="btn btn-danger" id="clrAll">Clear</button>')}</div>`;
+    $('expAll').onclick = () => download('cognitive-sessions.md', state.sessions.map(exportSession).join('\n\n\n'));
+    $('clrAll').onclick = () => { if (busy || loops.size) return toast('Stop running work first.'); if (confirm('Clear all sessions?')) { state.sessions = []; state.currentId = null; save(); renderAll(); } };
+  }
+}
+let deferredInstall = null;
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
+function installPWA() { if (deferredInstall) { deferredInstall.prompt(); deferredInstall = null; } else toast('Use your browser menu → "Install app" or "Add to Home Screen".'); }
+
+async function checkout(plan, btn) {
+  const p = PLANS.find(x => x.id === plan);
+  btn.disabled = true; const t = btn.textContent; btn.textContent = 'Opening checkout…';
+  try { const r = await (await api('/api/billing', { plan })).json(); location.href = r.url; }
+  catch (e) {
+    btn.disabled = false; btn.textContent = t;
+    if (e.data?.contact) location.href = `mailto:${e.data.contact}?subject=${encodeURIComponent(`Cognitive AI ${p.name} plan ($${p.price}/month)`)}&body=${encodeURIComponent(`Hi, I'd like to start the ${p.name} plan.\n\nName: ${state.profile.name || ''}\nCompany:\nTeam size:`)}`;
+    else toast(e.message);
+  }
+}
+
+/* ================= global wiring ================= */
+let gPending = false;
+document.addEventListener('click', e => {
+  const n = e.target.closest('[data-nav]'); if (n) { const v = n.dataset.nav; if (v === 'home') { state.currentId = null; } go(v); return; }
+  const g = e.target.closest('[data-nav-go]'); if (g) { go(g.dataset.navGo); return; }
+  const s = e.target.closest('[data-sess]'); if (s) { go('session', { currentId: s.dataset.sess }); }
+});
+$('newSessBtn').onclick = () => go('home', { currentId: null });
+$('wsBtn').onclick = () => go('settings', { settingsTab: 'repositories' });
+$('collapseBtn').onclick = () => { if (innerWidth <= 860) document.body.classList.remove('nav-open'); else { state.sideClosed = true; save(); renderSide(); } };
+$('openSideBtn').onclick = () => { state.sideClosed = false; save(); renderSide(); };
+$('menuBtn').onclick = () => document.body.classList.add('nav-open');
+$('scrim').onclick = () => document.body.classList.remove('nav-open');
+addEventListener('resize', renderSide);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.body.classList.remove('nav-open');
+  const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || $('onboard').classList.contains('open');
+  if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (gPending) { gPending = false; if (k === 'a') go('analytics'); else if (k === 'b') go('benchmark'); else if (k === 's') go('settings'); return; }
+  if (k === 'g') { gPending = true; setTimeout(() => gPending = false, 1200); return; }
+  if (k === 'n') { e.preventDefault(); go('home', { currentId: null }); }
+  if (e.key === '/') { const ta = $('homeIn') || $('chatIn'); if (ta) { e.preventDefault(); ta.focus(); } }
+  if (e.key === '.') { const s = cur(); if (state.view === 'session' && s?.type === 'mission') { e.preventDefault(); missionControl(s, s.mission.phase === 'paused' ? 'resume' : 'pause'); } }
+});
+
+/* ================= init ================= */
+state.sessions.forEach(s => { s.pauseRequested = false; if (s.running) { s.running = false; if (s.type === 'swarm' && s.status !== 'done') s.status = 'stopped'; } });
+const qs = new URLSearchParams(location.search);
+if (qs.get('checkout') === 'success') { const p = PLANS.find(x => x.id === qs.get('plan')); if (p) state.plan = p.name; history.replaceState(null, '', location.pathname); setTimeout(() => toast(`Welcome to ${p?.name || 'your new plan'} — thanks!`), 400); }
+if (qs.get('checkout') === 'cancelled') history.replaceState(null, '', location.pathname);
+detectRuntime().then(loadIntegrations).then(() => { if (!state.onboarded) renderOnboard(); else renderAll(); resumeMissionsOnLoad(); });
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('/sw.js').catch(() => {});
+if (!state.onboarded) { $('onboard').classList.add('open'); renderOnboard(); }
+if (state.view === 'session' && !cur()) state.view = 'home';
+renderAll();
+</script>
+</body>
+</html>
