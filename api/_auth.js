@@ -10,7 +10,11 @@ const MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 const als = new AsyncLocalStorage();
 
 const keyFor = purpose => crypto.createHash('sha256').update(`${process.env.SESSION_SECRET || ''}|${purpose}`).digest();
-export const authEnabled = () => !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET && String(process.env.SESSION_SECRET || '').length >= 32);
+const secretOk = () => String(process.env.SESSION_SECRET || '').length >= 32;
+export const githubLoginEnabled = () => !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET && secretOk());
+export const googleLoginEnabled = () => !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && secretOk());
+export const authEnabled = () => githubLoginEnabled() || googleLoginEnabled();
+export const loginProviders = () => [githubLoginEnabled() && 'github', googleLoginEnabled() && 'google'].filter(Boolean);
 
 export function seal(obj, purpose = 'session') {
   const iv = crypto.randomBytes(12);
