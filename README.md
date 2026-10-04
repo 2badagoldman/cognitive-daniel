@@ -3,18 +3,30 @@
 **Daniel** is an autonomous engineer. Give it a goal; it plans the work into tasks, completes every task with its tests verified by the platform, commits each one, and opens one pull request (or a local branch). It retries with fresh approaches, compacts its context on long tasks, escalates to stronger models when stuck, parks and later revisits blocked tasks, and pauses (never throws work away) at your budget/time limits.
 
 ## What's new in v7
-- **Sign in with GitHub.** Customers sign in with GitHub instead of typing a shared access code. Their own GitHub token is used for their repos and pull requests (no server-wide `GITHUB_TOKEN` needed).
+- **Sign in with GitHub or Google.** Customers sign in (or sign up) with GitHub or Google instead of typing a shared access code. Their own GitHub token is used for their repos and pull requests (no server-wide `GITHUB_TOKEN` needed).
+- **Pick a repo, don't paste one.** After signing in, "Choose a GitHub repository" lists every repo the user can access (personal, collaborator and organization), with search. Pasting a URL is still available as a fallback.
 - **Cognitive Personal.** A personal life agent in the suite: it remembers what you tell it (Memory tab, deletable) and works across Gmail/Google Calendar, Outlook/Microsoft 365, text messages (Twilio), X and Home Assistant. Anything that sends, posts or controls a device waits for your confirmation.
+- **Cognitive Trader.** A trading desk agent: portfolio review, technical analysis, strategy backtests and order execution across Alpaca, Tradier, OANDA, Coinbase Advanced, Kraken and Interactive Brokers (beta), plus a built-in $100k simulator. Every order is a ticket the user confirms; a risk engine (order size, position %, daily loss, orders/day, symbol lists, no-shorting, kill switch) checks it when prepared and again at confirmation. Live trading is off until the user enables it. See "Cognitive Trader" below.
 - **Honest verification.** Daniel can no longer finish a task by editing existing tests or by "proving" it with `true`, `echo` or `npm test || true`. New test files are still encouraged.
 - **Any stack, out of the box.** The sandbox detects Go, Java/Maven, Rust, Python and Ruby projects and installs the toolchains before work starts.
 - **Safer by default.** Model and sandbox routes are closed until sign-in, an access code, or `ALLOW_PUBLIC_ACCESS=true` is configured. Every route is rate-limited; repeated wrong access codes lock the caller out for 15 minutes; codes are compared in constant time.
 - **Clearer errors.** A banner shows when `ANTHROPIC_API_KEY` is missing, missions stop instead of retrying on auth errors, and Wiki failures are shown on the page.
 
-### Setting up sign-in (5 minutes)
+### Setting up sign-in (about 10 minutes)
+Customers sign in, or sign up on first visit, with **GitHub** or **Google**. No access code. GitHub sign-in also loads the user's repositories into a picker automatically; Google users can connect GitHub afterwards from the same picker.
+
+**GitHub** (required for the repo picker)
 1. GitHub → Settings → Developer settings → OAuth Apps → **New OAuth App**.
-   Homepage URL: `https://<your-domain>` · Callback URL: `https://<your-domain>/api/auth?action=callback`
-2. In Vercel add `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` and `SESSION_SECRET` (any random string of 32+ characters), then redeploy.
-3. Optional: `ALLOWED_GITHUB_USERS=alice,bob` limits who can sign in. `PORTAL_ACCESS_CODE` keeps working for scripts and CI.
+2. Homepage URL `https://<your-domain>` · Authorization callback URL `https://<your-domain>/api/auth?action=callback&provider=github`
+3. Vercel env: `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`.
+
+**Google** (optional)
+1. Google Cloud Console → APIs & Services → Credentials → **OAuth client ID** (Web application). OAuth consent screen: External, scopes `openid email profile`.
+2. Authorized redirect URI `https://<your-domain>/api/auth?action=callback&provider=google` (add `https://<your-domain>/api/personal?action=oauth&provider=google` too if you use Gmail in Cognitive Personal).
+3. Vercel env: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`.
+
+**Both:** `SESSION_SECRET` = any random string of 32+ characters. Redeploy after adding variables.
+Optional: `ALLOWED_USERS=dan,@yourcompany.com` limits who can sign in (GitHub usernames, emails or @domains). `PORTAL_ACCESS_CODE` keeps working for scripts and CI.
 
 ### Setting up Cognitive Personal connections
 Each connection is optional. The OAuth redirect URI for all of them is `https://<your-domain>/api/personal?action=oauth&provider=<google|microsoft|x>`.
@@ -30,6 +42,25 @@ Each connection is optional. The OAuth redirect URI for all of them is `https://
 Not possible from a web app yet: Apple Health / Health Connect and reading your phone's own texts (need a mobile app), and Instagram/Facebook/LinkedIn posting (needs Meta/LinkedIn app review).
 
 **Privacy.** Memory is stored on the user's device and sent with each request. Connection tokens live in encrypted, httpOnly cookies on the user's browser. Nothing is stored on the server.
+
+### Cognitive Trader
+Open **Trading** in the sidebar. Accounts → **Start simulator** works with no keys (crypto prices from Coinbase's public feed). Connect a free **Alpaca paper** account to simulate stocks too.
+
+| Broker | Assets | Paper | What the user pastes |
+|---|---|---|---|
+| Built-in simulator | Crypto; stocks with Alpaca/Tradier data | Always | nothing |
+| Alpaca | US stocks, ETFs, crypto | Yes | API key ID + secret |
+| Tradier | US stocks, ETFs | Sandbox | Token + account ID |
+| OANDA | Forex, CFDs | Practice | Token + account ID |
+| Coinbase Advanced | Crypto | No (live only) | CDP API key name + EC private key |
+| Kraken | Crypto | No (live only) | API key + secret |
+| Interactive Brokers (beta) | Stocks, options, futures, FX | Yes | HTTPS URL of the user's Client Portal Gateway + account ID |
+
+Not supported: Robinhood stocks, Fidelity and Vanguard (no public trading APIs); Schwab (needs Schwab app approval); E*TRADE, Webull, MetaTrader (planned).
+
+Safety: the agent can only *prepare* orders. The user confirms each ticket; risk limits are re-checked at confirmation, market tickets are refused if the price moved more than 2%, tickets expire after 15 minutes, and a paper ticket can never be replayed against a live account. Broker keys are stored encrypted in the user's own browser cookies, never on the server.
+
+**Compliance note.** The agent gives information and executes the user's instructions; it is not a registered investment adviser and says so. Before charging for trading features or marketing them as advice, get a securities lawyer's view (SEC/FINRA in the US, and the equivalent elsewhere).
 
 ### Tests
 `npm test` runs the v7 unit tests (access control, verification guards, toolchain detection, personal agent).
@@ -60,7 +91,9 @@ Deploy this folder (the `desktop/`, `local/` and `.github/` folders are ignored 
 | Variable | Purpose |
 |---|---|
 | `ANTHROPIC_API_KEY` | Required. Powers every agent. |
-| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `SESSION_SECRET` | Sign in with GitHub (v7). Replaces the access code for customers. |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `SESSION_SECRET` | Sign in with GitHub (v7) and the repository picker. Replaces the access code for customers. |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Sign in with Google (v7), and Gmail/Calendar in Cognitive Personal. |
+| `ALLOWED_USERS` | Optional sign-in allowlist: GitHub usernames, emails or `@domain`s. |
 | `PORTAL_ACCESS_CODE` | Shared access code for scripts/CI, or when sign-in is not set up. |
 | `ALLOW_PUBLIC_ACCESS` | `true` opens model routes without sign-in (public demo). Off by default. |
 | `RATE_LIMIT_PER_MIN` | Requests per minute per visitor per route (default 60). |

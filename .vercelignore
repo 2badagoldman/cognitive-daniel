@@ -1,3 +1,6 @@
 desktop
 local
 .github
+*.zip
+test
+CHANGELOG.md

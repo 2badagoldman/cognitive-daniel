@@ -9,12 +9,13 @@
     "@vercel/functions": "^3.0.0",
     "@vercel/sandbox": "^3.5.1"
   },
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "Daniel by Cognitive AI \u2014 autonomous engineering team. Web app, API, local engine and CLI.",
   "bin": {
     "daniel": "local/cli.mjs"
   },
   "scripts": {
+    "test": "node --test test/*.test.mjs",
     "start": "node local/cli.mjs serve",
     "daniel": "node local/cli.mjs"
   },
